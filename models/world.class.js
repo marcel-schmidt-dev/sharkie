@@ -1,8 +1,10 @@
 import Player from './player.class.js';
+import JellyFish from './jellyFish.class.js';
 import StaticObject from './staticObject.class.js';
 
 class World {
     player = new Player(50, 50, 200, 200);
+    enemy = new JellyFish(300, 100, 100, 100);
     ctx;
     canvas;
     backgroundObjects = [
@@ -24,6 +26,7 @@ class World {
             object.loadImage(this.ctx);
         });
         this.player.loadImage(this.ctx);
+        this.enemy.loadImage(this.ctx);
         this.lightObject.loadImage(this.ctx);
         requestAnimationFrame(() => this.draw());
     }

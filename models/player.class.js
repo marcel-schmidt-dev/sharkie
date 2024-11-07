@@ -23,13 +23,11 @@ class Player extends MoveableObject {
         "/assets/sharkie/1.IDLE/18.png",
     ]
 
-
-    currentImage = 0;
     constructor(x, y, width, height) {
         super(x, y, width, height);
         this.loadImages(this.idleImages);
         this.image.src = "/assets/sharkie/1.IDLE/1.png";
-        this.animateIdle();
+        this.animateIdle(this.idleImages);
     }
 
     shoot() {

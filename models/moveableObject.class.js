@@ -3,6 +3,7 @@ class MoveableObject {
     frameCount = 0;
     animationSpeed = 30;
     health = 100;
+    currentImage = 0;
 
     constructor(x, y, width, height, imageUrl) {
         this.x = x;
@@ -26,27 +27,27 @@ class MoveableObject {
             });
         });
 
-        await Promise.all(loadPromises);
-        this.imagesLoaded = true;
+        await Promise.all(loadPromises).then(() => {
+            this.imagesLoaded = true;
+        });
     }
 
-    animateIdle() {
+    animateIdle(pathArray) {
         this.frameCount++;
 
         if (this.frameCount >= this.animationSpeed) {
             this.frameCount = 0;
             this.currentImage++;
 
-            if (this.currentImage >= this.idleImages.length) {
-                this.currentImage = 0;
-            }
+            if (this.currentImage >= pathArray.length) this.currentImage = 0;
+
         }
 
         if (this.imagesLoaded) {
-            this.image = this.imageCache[this.idleImages[this.currentImage]];
+            this.image = this.imageCache[pathArray[this.currentImage]];
         }
 
-        requestAnimationFrame(() => this.animateIdle());
+        requestAnimationFrame(() => this.animateIdle(pathArray));
     }
 
     moveRight() {
