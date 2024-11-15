@@ -1,23 +1,23 @@
-import './style.scss'
-import World from './models/world.class.js';
+import Game from './classes/Game';
+import './style.scss';
 
-const canvas = document.getElementById('canvas');
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+export const GAME_SPEED = 0.8; // Hier die Spielgeschwindigkeit anpassen
 
-const world = new World(canvas);
-window.world = world;
-world.draw();
+const imageCache = {};
 
-document.addEventListener('keydown', (event) => {
-    if (event.key === 'ArrowRight') {
-        world.player.moveRight();
+export function loadImage(src) {
+    if (imageCache[src]) {
+        return imageCache[src];
     }
-    if (event.key === 'ArrowLeft') {
-        world.player.moveLeft();
-    }
-    if (event.key === 'ArrowUp') {
-        world.player.moveUp();
-    }
-    if (event.key === 'ArrowDown') {
-        world.player.moveDown();
-    }
-});
+
+    const img = new Image();
+    img.src = src;
+    imageCache[src] = img;
+
+    return img;
+}
+
+const game = new Game(ctx);
+game.start();
