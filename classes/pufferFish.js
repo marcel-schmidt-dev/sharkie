@@ -32,8 +32,8 @@ export default class PufferFish extends Enemy {
         this.game = game;
         this.type = 'pufferFish';
         this.color = randomColor;
-        this.width = 100;
-        this.height = 100;
+        this.width = this.canvas.width / 14;
+        this.height = this.canvas.width / 14;
         this.speed = 3 * GAME_SPEED;
         this.health = 2;
         this.currentAnimation = 'transition';
@@ -80,7 +80,11 @@ export default class PufferFish extends Enemy {
             }
         }
 
-        this.hitbox = { x: this.x, y: this.y, width: this.width, height: this.height };
+        if (this.isDying) {
+            this.hitbox = { x: 0, y: 0, width: 0, height: 0 };
+        } else {
+            this.hitbox = { x: this.x, y: this.y, width: this.width, height: this.height };
+        }
     }
 
     draw(ctx) {

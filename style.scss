@@ -1,3 +1,8 @@
+@font-face {
+  font-family: "Luckiest Guy";
+  src: url("/assets/font/LuckiestGuy-Regular.ttf");
+}
+
 body {
   min-height: 100vh;
   display: flex;
@@ -7,11 +12,7 @@ body {
   background-image: url("/assets/background/Layers/water/D.png");
   background-position: center;
   background-size: cover;
-}
-
-#canvas {
-  background-color: #000;
-  border: 2px solid #fff;
+  font-family: "Luckiest Guy";
 }
 
 .btn-group {
@@ -19,6 +20,7 @@ body {
   margin-top: 20px;
   width: 100%;
   justify-content: space-evenly;
+  max-width: 1280px;
 
   .btn {
     display: flex;
@@ -34,36 +36,83 @@ body {
     div {
       font-size: 1.5rem;
       color: #fff;
-      font-family: "Impact", sans-serif;
       white-space: nowrap;
     }
   }
 }
 
 #app {
-  position: relative;
-}
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
 
-.ui {
-  position: absolute;
-  left: 10px;
-  top: 10px;
+  .game {
+    position: relative;
+    width: 100%;
+    max-width: 1280px;
+    max-height: 720px;
+    aspect-ratio: 16 / 9;
 
-  & > div {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 20px;
-  }
+    #canvas {
+      background-color: #000;
+      width: 100%;
+      height: 100%;
+    }
 
-  img {
-    width: auto;
-    max-height: 50px;
-  }
+    .ui {
+      position: absolute;
+      left: 10px;
+      top: 10px;
+      display: flex;
+      gap: 20px;
 
-  span {
-    font-size: 1.5rem;
-    color: #fff;
-    font-family: "Impact", sans-serif;
+      & > div {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 20px;
+      }
+
+      img {
+        width: 100%;
+        max-width: 50px;
+        max-height: 50px;
+      }
+
+      span {
+        font-size: 1.5rem;
+        color: #fff;
+      }
+    }
+
+    #end-screen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 100;
+      display: none;
+    }
+
+    #retry {
+      position: absolute;
+      background-color: transparent;
+      border: none;
+      left: 50%;
+      width: 40%;
+      z-index: 1000;
+      top: 50%;
+      transform: translate(-50%, 150%);
+      cursor: pointer;
+      display: none;
+
+      img {
+        width: 100%;
+      }
+    }
   }
 }

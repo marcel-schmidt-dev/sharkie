@@ -105,6 +105,8 @@ export default class Game {
             coin.draw(this.ctx);
             if (coin.isCollidingWith(this.player)) {
                 this.coins.splice(this.coins.indexOf(coin), 1);
+                this.player.coins++;
+                this.player.updateUI();
             }
         });
 
@@ -115,6 +117,8 @@ export default class Game {
             poison.draw(this.ctx);
             if (poison.isCollidingWith(this.player)) {
                 this.poisons.splice(this.poisons.indexOf(poison), 1);
+                this.player.potions++;
+                this.player.updateUI();
             }
         });
 
@@ -149,6 +153,19 @@ export default class Game {
         }
 
         if (this.isRunning) requestAnimationFrame(() => this.update());
+    }
+
+    showEndScreen(winCondition) {
+        this.isRunning = false; // Stoppe das Spiel
+        const endScreen = document.getElementById('end-screen');
+        if (winCondition === 'win') {
+            endScreen.src = '/assets/buttons/Try again/win.png'
+        } else {
+            endScreen.src = '/assets/buttons/Try again/lose.png'
+        }
+        endScreen.style.display = 'block';
+        const retryBtn = document.getElementById('retry');
+        retryBtn.style.display = 'block';
     }
 
     spawnEnemy() {

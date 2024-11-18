@@ -12,10 +12,6 @@ export default class Boss extends Enemy {
     constructor(game) {
         super(animations);
         this.game = game;
-        this.initializeProperties();
-    }
-
-    initializeProperties() {
         this.width = 500;
         this.height = 500;
         this.speed = 1 * GAME_SPEED;
@@ -123,8 +119,6 @@ export default class Boss extends Enemy {
             x: player.x + player.width / 2 - (bossCenterOffset.x - this.width / 4), // Mitte des Spielers - Mitte des Bosses
             y: player.y + player.height / 2 - (bossCenterOffset.y + this.height / 2)
         };
-
-        console.log(`Calculated target position: ${JSON.stringify(this.targetPosition)}`);
     }
 
 
@@ -166,12 +160,11 @@ export default class Boss extends Enemy {
             this.x = this.targetPosition.x;
             this.y = this.targetPosition.y;
             this.attackPhase = 'retreat';
-            console.log("Target reached.");
         } else {
             // Normiere den Richtungsvektor und bewege den Boss
-            this.x += (directionX / distance) * attackSpeed;
-            this.y += (directionY / distance) * attackSpeed;
         }
+        this.x += (directionX / distance) * attackSpeed;
+        this.y += (directionY / distance) * attackSpeed;
     }
 
 

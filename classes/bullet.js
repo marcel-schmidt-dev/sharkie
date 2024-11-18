@@ -1,13 +1,18 @@
 class Bullet {
-    constructor(x, y, speed = 3, damage = 1) {
+    constructor(x, y, special = false, buffed = false) {
         this.x = x;
         this.y = y;
         this.width = 30;
         this.height = 30;
-        this.speed = speed;
-        this.damage = damage;
+        this.speed = 5;
+        this.damage = special ? (buffed ? 4 : 3) : (buffed ? 2 : 1);
         this.image = new Image();
-        this.image.src = '/assets/sharkie/4.Attack/Bubble trap/Bubble.png';
+        if (buffed) {
+            this.image.src = '/assets/sharkie/4.Attack/Bubble trap/Buffed.png';
+        }
+        else {
+            this.image.src = '/assets/sharkie/4.Attack/Bubble trap/Bubble.png';
+        }
         this.hitbox = { x: this.x, y: this.y, width: this.width, height: this.height };
         this.isCollided = false;
     }

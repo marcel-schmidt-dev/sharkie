@@ -34,9 +34,9 @@ export default class JellyFish extends Enemy {
 
         this.game = game;
         this.type = type;
-        this.width = 150;
-        this.height = 150;
-        this.health = 1;
+        this.width = this.canvas.width / 8;
+        this.height = this.canvas.width / 8;
+        this.health = 2;
         this.speed = (type === 'green' || type === 'pink') ? 6 * GAME_SPEED : 4 * GAME_SPEED; // Geschwindigkeit anpassen
         this.frameSpeed = 12.5 / GAME_SPEED;
         this.tickCount = 0;
@@ -67,7 +67,12 @@ export default class JellyFish extends Enemy {
             }
         }
 
-        this.hitbox = { x: this.x + 20, y: this.y + 15, width: this.width - 40, height: this.height - 40 };
+        if (this.isDying) {
+            this.hitbox = { x: 0, y: 0, width: 0, height: 0 };
+        } else {
+            this.hitbox = { x: this.x + 20, y: this.y + 15, width: this.width - 40, height: this.height - 40 };
+        }
+
     }
 
     onCollisionWithBullet() {
