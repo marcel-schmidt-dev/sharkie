@@ -8,7 +8,7 @@ export default class Poison {
         this.height = 80;
         this.frameIndex = 0;
         this.tickCount = 0;
-        this.ticksPerFrame = 20; // Geschwindigkeit der Animation
+        this.ticksPerFrame = 20;
         this.frames = [
             '/assets/marks/poison/1.png',
             '/assets/marks/poison/2.png',
@@ -28,6 +28,7 @@ export default class Poison {
             };
             return img;
         });
+        this.hitbox = { x: this.x, y: this.y, width: this.width, height: this.height };
     }
 
     update() {
@@ -37,6 +38,7 @@ export default class Poison {
             this.tickCount = 0;
             this.frameIndex = (this.frameIndex + 1) % this.frames.length;
         }
+        this.hitbox = { x: this.x, y: this.y, width: this.width, height: this.height };
     }
 
     draw(ctx) {
@@ -50,23 +52,14 @@ export default class Poison {
         return this.x + this.width > 0 && this.x < canvas.width && this.y + this.height > 0 && this.y < canvas.height;
     }
 
-    getHitbox() {
-        return {
-            x: this.x,
-            y: this.y,
-            width: this.width,
-            height: this.height
-        };
-    }
-
     isCollidingWith(other) {
-        const poisonHitbox = this.getHitbox();
-        const otherHitbox = other.getHitbox();
+        const poison = this.hitbox;
+        const otherHitbox = other.hitbox;
         return (
-            poisonHitbox.x < otherHitbox.x + otherHitbox.width &&
-            poisonHitbox.x + poisonHitbox.width > otherHitbox.x &&
-            poisonHitbox.y < otherHitbox.y + otherHitbox.height &&
-            poisonHitbox.y + poisonHitbox.height > otherHitbox.y
+            poison.x < otherHitbox.x + otherHitbox.width &&
+            poison.x + poison.width > otherHitbox.x &&
+            poison.y < otherHitbox.y + otherHitbox.height &&
+            poison.y + poison.height > otherHitbox.y
         );
     }
 }

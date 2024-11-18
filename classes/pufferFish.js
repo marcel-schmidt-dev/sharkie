@@ -1,6 +1,5 @@
 import { GAME_SPEED, loadImage } from '../main';
 import Enemy from './enemy';
-import Coin from './coin';
 
 const animations = {
     green: {
@@ -35,21 +34,19 @@ export default class PufferFish extends Enemy {
         this.color = randomColor;
         this.width = 100;
         this.height = 100;
-        this.speed = 3 * GAME_SPEED; // Geschwindigkeit anpassen
+        this.speed = 3 * GAME_SPEED;
         this.health = 2;
         this.currentAnimation = 'transition';
         this.frameTick = 0;
-        this.frameSpeed = 10 / GAME_SPEED; // Frame-Geschwindigkeit anpassen
-        this.x = canvas.width; // Startposition am rechten Rand des Canvas
-        this.y = Math.random() * (canvas.height - this.height); // Zufällige y-Position
-
-
+        this.frameSpeed = 10 / GAME_SPEED;
+        this.x = canvas.width;
+        this.y = Math.random() * (canvas.height - this.height);
+        this.hitbox;
     }
 
     update() {
         if (this.isDying) {
-            // Move upwards when dying
-            this.y -= this.speed / 2; // Adjust the speed as needed
+            this.y -= this.speed / 2;
             this.frameTick++;
             if (this.frameTick >= this.frameSpeed) {
                 this.frameTick = 0;
@@ -66,7 +63,6 @@ export default class PufferFish extends Enemy {
                     this.frameTick = 0;
                     this.currentFrameIndex = (this.currentFrameIndex + 1) % this.frames.length;
 
-                    // Switch to bubbleswim animation after transition animation completes
                     if (this.currentAnimation === 'transition' && this.currentFrameIndex === 0) {
                         this.frames = animations[this.color].bubbleswim.map(src => {
                             const img = loadImage(src);
@@ -83,46 +79,16 @@ export default class PufferFish extends Enemy {
                 }
             }
         }
+
+        this.hitbox = { x: this.x, y: this.y, width: this.width, height: this.height };
     }
 
     draw(ctx) {
-        super.draw(ctx); // Aufruf der draw-Methode der Enemy-Klasse
+        super.draw(ctx);
     }
 
     onCollisionWithBullet() {
         this.health--;
         if (this.health <= 0) this.die();
-    }
-
-    getHitbox() {
-        if (this.isDying) {
-            return { x: 0, y: 0, width: 0, height: 0 }; // Return an empty hitbox when dying
-        }
-        return {
-            x: this.x,
-            y: this.y,
-            width: this.width - 10,
-            height: this.height - 10
-        };
-    }
-
-    die() {
-        this.isDying = true;
-        this.frames = this.animations.die.map(src => {
-            const img = loadImage(src);
-            img.onload = () => {
-                this.isLoaded = true;
-            };
-            img.onerror = () => {
-                img.broken = true;
-            };
-            return img;
-        });
-        this.currentAnimation = 'die';
-        this.currentFrameIndex = 0;
-        this.frameTick = 0;
-
-        const coin = new Coin(this.x, this.y);
-        this.game.coins.push(coin);
     }
 }

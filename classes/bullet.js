@@ -5,29 +5,22 @@ class Bullet {
         this.width = 30;
         this.height = 30;
         this.speed = speed;
-        this.damage = damage; // Standard-Schaden ist 1
-        this.hasHitbox = true;
+        this.damage = damage;
         this.image = new Image();
         this.image.src = '/assets/sharkie/4.Attack/Bubble trap/Bubble.png';
-        this.updateHitbox();
+        this.hitbox = { x: this.x, y: this.y, width: this.width, height: this.height };
+        this.isCollided = false;
     }
 
     update() {
         this.x += this.speed;
-        this.updateHitbox();
-    }
-
-    updateHitbox() {
-        this.hitbox = {
-            x: this.x,
-            y: this.y,
-            width: this.width,
-            height: this.height
-        };
+        this.hitbox = { x: this.x, y: this.y, width: this.width, height: this.height };
     }
 
     draw(ctx) {
         ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+        ctx.strokeStyle = 'red';
+        ctx.strokeRect(this.hitbox.x, this.hitbox.y, this.hitbox.width, this.hitbox.height);
     }
 
     isInBounds() {
@@ -35,33 +28,16 @@ class Bullet {
     }
 
     isCollidingWith(other) {
-        const bulletHitbox = this.getHitbox();
-        const otherHitbox = other.getHitbox();
-        return (
-            bulletHitbox.x < otherHitbox.x + otherHitbox.width &&
+        const bulletHitbox = this.hitbox;
+        const otherHitbox = other.hitbox;
+
+        if (bulletHitbox.x < otherHitbox.x + otherHitbox.width &&
             bulletHitbox.x + bulletHitbox.width > otherHitbox.x &&
             bulletHitbox.y < otherHitbox.y + otherHitbox.height &&
-            bulletHitbox.y + bulletHitbox.height > otherHitbox.y
-        );
-    }
-
-    getHitbox() {
-        return this.hitbox;
-    }
-
-    shouldDelete(enemies) {
-        if (!this.isInBounds()) {
+            bulletHitbox.y + bulletHitbox.height > otherHitbox.y) {
+            this.isCollided = true;
             return true;
         }
-
-        for (let enemy of enemies) {
-            if (this.isCollidingWith(enemy)) {
-                enemy.handleCollisionWithBullet(this);
-                return true;
-            }
-        }
-
-        return false;
     }
 }
 

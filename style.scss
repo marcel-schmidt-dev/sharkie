@@ -4,8 +4,66 @@ body {
   align-items: center;
   justify-content: center;
   margin: 0;
+  background-image: url("/assets/background/Layers/water/D.png");
+  background-position: center;
+  background-size: cover;
 }
 
 #canvas {
   background-color: #000;
+  border: 2px solid #fff;
+}
+
+.btn-group {
+  display: flex;
+  margin-top: 20px;
+  width: 100%;
+  justify-content: space-evenly;
+
+  .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+
+    img {
+      width: 100%;
+      max-height: 50px;
+    }
+
+    div {
+      font-size: 1.5rem;
+      color: #fff;
+      font-family: "Impact", sans-serif;
+      white-space: nowrap;
+    }
+  }
+}
+
+#app {
+  position: relative;
+}
+
+.ui {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+
+  & > div {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 20px;
+  }
+
+  img {
+    width: auto;
+    max-height: 50px;
+  }
+
+  span {
+    font-size: 1.5rem;
+    color: #fff;
+    font-family: "Impact", sans-serif;
+  }
 }

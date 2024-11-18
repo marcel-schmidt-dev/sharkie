@@ -18,6 +18,7 @@ export default class Game {
         this.backgroundLayerCounter = 0; // Zähler für die Hintergrundebenen
         this.levelTimeOut = 2; // Level-Timeout auf 60 Sekunden gesetzt
         this.bossSpawned = false; // Flagge, um zu überprüfen, ob der Boss gespawnt wurde
+        this.boss = null; // Referenz auf den Boss
 
         this.backgroundLayers = [
             new BackgroundLayer('/assets/background/Layers/water/D.png', 0.5 * GAME_SPEED),
@@ -53,14 +54,13 @@ export default class Game {
 
             // Deaktiviere die Hitboxen der bestehenden Gegner und lasse sie aus dem Bild schwimmen
             this.enemies.forEach(enemy => {
-                enemy.hasHitbox = false;
-                enemy.x += enemy.speed; // Lasse die Gegner nach rechts aus dem Bild schwimmen
+                enemy.hitbox = { x: -100, y: -100, width: 0, height: 0 };
+                enemy.x -= GAME_SPEED * 3;
             });
 
             // Spawne den Boss, wenn er noch nicht gespawnt wurde
             if (!this.bossSpawned) {
-                const boss = new Boss(this);
-                this.enemies.push(boss);
+                this.boss = new Boss(this);
                 this.bossSpawned = true;
             }
         }
@@ -73,21 +73,30 @@ export default class Game {
 
         // Bullets
         this.bullets = this.bullets.filter(bullet => {
+            if (bullet.isCollided) {
+                return false;
+            }
             bullet.update();
             bullet.draw(this.ctx);
-            return bullet.isInBounds() && !this.checkBulletCollision(bullet);
+            return bullet.isInBounds();
         });
 
         // Enemies
         this.enemies = this.enemies.filter(enemy => enemy.isInBounds());
         this.enemies.forEach(enemy => {
             enemy.update();
-            enemy.draw(this.ctx); // Pass the ctx parameter to the draw method
+            enemy.draw(this.ctx);
         });
 
         // Player
         this.player.update();
         this.player.draw(this.ctx);
+
+        // Boss
+        if (this.bossSpawned) {
+            this.boss.update();
+            this.boss.draw(this.ctx);
+        }
 
         // Coins
         this.coins = this.coins.filter(coin => coin.isInBounds());
@@ -95,7 +104,7 @@ export default class Game {
             coin.update();
             coin.draw(this.ctx);
             if (coin.isCollidingWith(this.player)) {
-                this.coins.splice(this.coins.indexOf(coin), 1); // Entferne die Coin bei Kollision mit dem Spieler
+                this.coins.splice(this.coins.indexOf(coin), 1);
             }
         });
 
@@ -105,7 +114,7 @@ export default class Game {
             poison.update();
             poison.draw(this.ctx);
             if (poison.isCollidingWith(this.player)) {
-                this.poisons.splice(this.poisons.indexOf(poison), 1); // Entferne die Coin bei Kollision mit dem Spieler
+                this.poisons.splice(this.poisons.indexOf(poison), 1);
             }
         });
 
@@ -129,8 +138,8 @@ export default class Game {
             }
 
             // Randomize spawn times
-            const minSpawnTime = 500; // Minimum spawn time in milliseconds
-            const maxSpawnTime = 1500; // Maximum spawn time in milliseconds
+            const minSpawnTime = 500;
+            const maxSpawnTime = 1500;
             const randomSpawnTime = Math.random() * (maxSpawnTime - minSpawnTime) + minSpawnTime;
 
             if (Date.now() - this.lastEnemySpawn > randomSpawnTime / GAME_SPEED) {
@@ -142,19 +151,9 @@ export default class Game {
         if (this.isRunning) requestAnimationFrame(() => this.update());
     }
 
-    checkBulletCollision(bullet) {
-        for (let enemy of this.enemies) {
-            if (bullet.isCollidingWith(enemy)) {
-                enemy.handleCollisionWithBullet(bullet);
-                return true;
-            }
-        }
-        return false;
-    }
-
     spawnEnemy() {
         if ((Date.now() - this.startTime) / 1000 >= this.levelTimeOut) {
-            return; // Keine neuen Gegner spawnen, wenn das Level-Timeout erreicht wurde
+            return;
         }
 
         const type = Math.random();
@@ -170,10 +169,28 @@ export default class Game {
     }
 
     checkCollisions() {
-        this.enemies.forEach(enemy => {
-            if (this.player.isCollidingWith(enemy)) {
-                this.player.handleCollisionWithEnemy(enemy);
+        if (!this.bossSpawned) {
+            this.enemies.forEach(enemy => {
+                if (this.player.isCollidingWith(enemy)) {
+                    this.player.handleCollisionWithEnemy(enemy);
+                } else {
+                    this.bullets.forEach(bullet => {
+                        if (bullet.isCollidingWith(enemy)) {
+                            enemy.handleCollisionWithBullet(bullet);
+                        }
+                    });
+                }
+            });
+        } else {
+            if (this.player.isCollidingWith(this.boss)) {
+                this.player.handleCollisionWithEnemy(this.boss);
+            } else {
+                this.bullets.forEach(bullet => {
+                    if (bullet.isCollidingWith(this.boss)) {
+                        this.boss.handleCollisionWithBullet(bullet);
+                    }
+                });
             }
-        });
+        }
     }
 }

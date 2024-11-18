@@ -5,7 +5,7 @@ export default class BackgroundLayer {
         this.speed = speed;
         this.x = 0;
         this.y = 0;
-        this.width = canvas.width;
+        this.width = canvas.width * 2;
         this.height = canvas.height;
     }
 

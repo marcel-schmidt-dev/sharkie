@@ -1,130 +1,257 @@
-import { GAME_SPEED, loadImage } from '../main';
+import { GAME_SPEED } from '../main';
 import Enemy from './enemy';
 
 const animations = {
-    transition: [
-        '/assets/enemy/boss/introduce/1.png',
-        '/assets/enemy/boss/introduce/2.png',
-        '/assets/enemy/boss/introduce/3.png',
-        '/assets/enemy/boss/introduce/4.png',
-        '/assets/enemy/boss/introduce/5.png',
-        '/assets/enemy/boss/introduce/6.png',
-        '/assets/enemy/boss/introduce/7.png',
-        '/assets/enemy/boss/introduce/8.png',
-        '/assets/enemy/boss/introduce/9.png',
-        '/assets/enemy/boss/introduce/10.png',
-    ],
-    swim: [
-        '/assets/enemy/boss/floating/1.png',
-        '/assets/enemy/boss/floating/2.png',
-        '/assets/enemy/boss/floating/3.png',
-        '/assets/enemy/boss/floating/4.png',
-        '/assets/enemy/boss/floating/5.png',
-        '/assets/enemy/boss/floating/6.png',
-        '/assets/enemy/boss/floating/7.png',
-        '/assets/enemy/boss/floating/8.png',
-        '/assets/enemy/boss/floating/9.png',
-        '/assets/enemy/boss/floating/10.png',
-        '/assets/enemy/boss/floating/11.png',
-        '/assets/enemy/boss/floating/12.png',
-        '/assets/enemy/boss/floating/13.png',
-    ],
-    die: [
-        '/assets/enemy/boss/dead/1.png',
-        '/assets/enemy/boss/dead/2.png',
-        '/assets/enemy/boss/dead/3.png',
-        '/assets/enemy/boss/dead/4.png',
-        '/assets/enemy/boss/dead/5.png',
-        '/assets/enemy/boss/dead/6.png',
-    ]
+    transition: [...Array(10).keys()].map(i => `/assets/enemy/boss/introduce/${i + 1}.png`),
+    swim: [...Array(13).keys()].map(i => `/assets/enemy/boss/floating/${i + 1}.png`),
+    die: [...Array(6).keys()].map(i => `/assets/enemy/boss/dead/${i + 1}.png`),
+    attack: [...Array(6).keys()].map(i => `/assets/enemy/boss/attack/${i + 1}.png`)
 };
 
 export default class Boss extends Enemy {
     constructor(game) {
         super(animations);
-
         this.game = game;
+        this.initializeProperties();
+    }
+
+    initializeProperties() {
         this.width = 500;
         this.height = 500;
-        this.speed = 1 * GAME_SPEED; // Geschwindigkeit anpassen
-        this.health = 2;
+        this.speed = 1 * GAME_SPEED;
+        this.health = 10;
+        this.x = canvas.width - this.width;
+        this.y = 0;
+        this.movingDown = true;
+        this.attackPhase = null; // 'announce', 'attack', 'retreat'
+        this.standbyTime = 500; // Ankündigungszeit in Millisekunden
+        this.resetState();
+
         this.currentAnimation = 'transition';
         this.frameTick = 0;
-        this.frameSpeed = 10 / GAME_SPEED; // Frame-Geschwindigkeit anpassen
-        this.x = canvas.width - this.width; // Startposition am rechten Rand des Canvas
-        this.y = 0; // Zufällige y-Position
-        this.transitionCompleted = false; // Flagge, um anzuzeigen, dass die transition-Animation abgeschlossen ist
-        this.randomPosition = Math.floor(Math.random() * (canvas.height - this.height));
-        this.tolerance = 5; // Toleranz in Pixeln
+        this.frameSpeed = 15 / GAME_SPEED;
+        this.attackFrameSpeed = 5 / GAME_SPEED;
+    }
 
-        // Lade die transition-Animation
-        this.frames = animations.transition.map(src => {
-            const img = loadImage(src);
-            img.onload = () => {
-                this.isLoaded = true;
-            };
-            img.onerror = () => {
-                img.broken = true;
-            };
-            return img;
-        });
+    resetState() {
+        this.isAttacking = false;
+        this.isReturning = false;
+        this.attackCooldown = this.getRandomCooldown();
+        this.originalPosition = { x: this.x, y: this.y };
+        this.targetPosition = null;
+        this.lastUpdateTime = Date.now();
+        this.hitbox = this.createHitbox();
+    }
+
+    createHitbox() {
+        return {
+            x: this.x + 25,
+            y: this.y + 225,
+            width: this.width - 50,
+            height: this.height - 300
+        };
+    }
+
+    getRandomCooldown() {
+        return Math.floor(Math.random() * 5000) + 5000; // Zufällige Zeit zwischen 5 und 10 Sekunden
     }
 
     update() {
         if (this.isDying) {
-            // Move upwards when dying
-            this.y -= this.speed / 2; // Adjust the speed as needed
-            this.frameTick++;
-            if (this.frameTick >= this.frameSpeed) {
-                this.frameTick = 0;
-                if (this.currentFrameIndex < this.frames.length - 1) {
-                    this.currentFrameIndex++;
-                }
-            }
+            this.handleDying();
+        } else if (this.isReturning) {
+            this.returnToOriginalPosition();
+        } else if (this.isAttacking) {
+            this.performAttack();
         } else {
-            this.x -= this.speed;
+            this.handleIdle();
+        }
 
-            // Bewege den Boss zur zufälligen y-Position
-            if (Math.abs(this.y - this.randomPosition) > this.tolerance) {
-                if (this.y < this.randomPosition) {
-                    this.y += this.speed;
-                } else if (this.y > this.randomPosition) {
-                    this.y -= this.speed;
-                }
-            } else {
-                // Aktualisiere die zufällige Position, sobald die aktuelle Position erreicht ist
-                this.randomPosition = Math.floor(Math.random() * (canvas.height - this.height));
-            }
+        this.updateHitbox();
+    }
 
-            if (this.isLoaded) {
-                this.frameTick++;
-                if (this.frameTick >= this.frameSpeed) {
-                    this.frameTick = 0;
-                    this.currentFrameIndex = (this.currentFrameIndex + 1) % this.frames.length;
+    updateHitbox() {
+        this.hitbox = this.createHitbox();
+    }
 
-                    // Switch to swim animation after transition animation completes
-                    if (this.currentAnimation === 'transition' && this.currentFrameIndex === this.frames.length - 1 && !this.transitionCompleted) {
-                        this.frames = animations.swim.map(src => {
-                            const img = loadImage(src);
-                            img.onload = () => {
-                                this.isLoaded = true;
-                            };
-                            img.onerror = () => {
-                                img.broken = true;
-                            };
-                            return img;
-                        });
-                        this.currentAnimation = 'swim';
-                        this.currentFrameIndex = 0; // Reset frame index for swim animation
-                        this.transitionCompleted = true; // Setze die Flagge, um anzuzeigen, dass die transition-Animation abgeschlossen ist
-                    }
-                }
+    handleDying() {
+        this.y -= this.speed / 2;
+        this.x -= this.speed * 2;
+        this.advanceAnimation();
+    }
+
+    handleIdle() {
+        const elapsedTime = Date.now() - this.lastUpdateTime;
+        this.attackCooldown -= elapsedTime;
+        this.lastUpdateTime = Date.now();
+
+        if (this.attackCooldown <= 0) {
+            this.startAttack();
+        } else {
+            this.patrol();
+        }
+    }
+
+    patrol() {
+        this.y += this.movingDown ? this.speed : -this.speed;
+        if (this.movingDown && this.hitbox.y + this.hitbox.height >= canvas.height) {
+            this.movingDown = false;
+        } else if (!this.movingDown && this.hitbox.y <= 0) {
+            this.movingDown = true;
+        }
+        this.updateAnimation();
+    }
+
+    startAttack() {
+        this.setPlayerPosition(); // Zielposition einmalig berechnen
+        this.isAttacking = true;
+        this.attackPhase = 'announce';
+        this.switchToAnimation('attack');
+        this.currentFrameIndex = 0;
+        this.announceStartTime = null;
+    }
+
+    setPlayerPosition() {
+        const player = this.game.player.hitbox; // Spieler-Hitbox
+        const bossCenterOffset = {
+            x: this.hitbox.width / 2, // Mitte der Boss-Hitbox
+            y: this.hitbox.height / 2
+        };
+
+        // Berechne die Zielposition basierend auf der Mitte des Spielers
+        this.targetPosition = {
+            x: player.x + player.width / 2 - (bossCenterOffset.x - this.width / 4), // Mitte des Spielers - Mitte des Bosses
+            y: player.y + player.height / 2 - (bossCenterOffset.y + this.height / 2)
+        };
+
+        console.log(`Calculated target position: ${JSON.stringify(this.targetPosition)}`);
+    }
+
+
+
+    performAttack() {
+        if (this.attackPhase === 'announce') {
+            this.handleAnnouncePhase();
+        } else if (this.attackPhase === 'attack') {
+            this.moveToTarget();
+        } else if (this.attackPhase === 'retreat') {
+            if (this.advancePhase(this.frames.length - 1)) {
+                this.endAttack();
             }
         }
     }
 
-    draw(ctx) {
-        super.draw(ctx); // Aufruf der draw-Methode der Enemy-Klasse
+    handleAnnouncePhase() {
+        if (!this.announceStartTime) {
+            this.updateAnimation();
+            if (this.currentFrameIndex >= 1) {
+                this.announceStartTime = Date.now();
+            }
+        } else {
+            const elapsedTime = Date.now() - this.announceStartTime;
+            if (elapsedTime >= this.standbyTime) {
+                this.attackPhase = 'attack';
+            }
+        }
+    }
+
+    moveToTarget() {
+        const attackSpeed = this.speed * 4; // Angriffs-Geschwindigkeit
+        const directionX = this.targetPosition.x - this.x;
+        const directionY = this.targetPosition.y - this.y;
+        const distance = Math.sqrt(directionX ** 2 + directionY ** 2);
+
+        if (distance <= attackSpeed) {
+            // Ziel erreicht
+            this.x = this.targetPosition.x;
+            this.y = this.targetPosition.y;
+            this.attackPhase = 'retreat';
+            console.log("Target reached.");
+        } else {
+            // Normiere den Richtungsvektor und bewege den Boss
+            this.x += (directionX / distance) * attackSpeed;
+            this.y += (directionY / distance) * attackSpeed;
+        }
+    }
+
+
+    endAttack() {
+        this.isAttacking = false;
+        this.isReturning = true;
+        this.switchToAnimation('swim');
+        this.lastUpdateTime = Date.now();
+    }
+
+    returnToOriginalPosition() {
+        const dx = this.originalPosition.x - this.x;
+        const dy = this.originalPosition.y - this.y;
+
+        // Gesamtentfernung berechnen
+        const distance = Math.sqrt(dx ** 2 + dy ** 2);
+        const speed = this.speed * 2;
+
+        if (distance > speed) {
+            // Bewegung proportional zur Distanz
+            this.x += (dx / distance) * speed;
+            this.y += (dy / distance) * speed;
+        } else {
+            // Ziel erreicht
+            this.x = this.originalPosition.x;
+            this.y = this.originalPosition.y;
+            this.isReturning = false;
+            this.attackCooldown = this.getRandomCooldown();
+        }
+
+        // Animation aktualisieren
+        this.updateAnimation();
+    }
+
+
+
+    switchToAnimation(animation) {
+        if (this.currentAnimation !== animation) { // Verhindert unnötige Animationen-Wechsel
+            this.currentAnimation = animation;
+            this.frames = this.loadImages(animations[animation]);
+            this.currentFrameIndex = 0;
+            this.frameTick = 0;
+        }
+    }
+
+    updateAnimation() {
+        if (!this.isLoaded) return;
+
+        this.frameTick++;
+        const speed = this.currentAnimation === 'attack' ? this.attackFrameSpeed : this.frameSpeed;
+
+        if (this.frameTick >= speed) {
+            this.frameTick = 0;
+
+            if (this.currentAnimation === 'transition') {
+                // Gehe zu 'swim', wenn 'transition' abgeschlossen ist
+                if (this.currentFrameIndex < this.frames.length - 1) {
+                    this.currentFrameIndex++;
+                } else {
+                    this.switchToAnimation('swim'); // Wechsel zu 'swim', wenn 'transition' fertig ist
+                }
+            } else {
+                this.currentFrameIndex = (this.currentFrameIndex + 1) % this.frames.length;
+            }
+        }
+    }
+
+    advancePhase(frameLimit) {
+        this.advanceAnimation();
+        return this.currentFrameIndex >= frameLimit;
+    }
+
+    advanceAnimation() {
+        this.frameTick++;
+        const speed = this.currentAnimation === 'attack' ? this.attackFrameSpeed : this.frameSpeed;
+
+        if (this.frameTick >= speed) {
+            this.frameTick = 0;
+            this.currentFrameIndex = Math.min(this.currentFrameIndex + 1, this.frames.length - 1);
+        }
     }
 
     onCollisionWithBullet() {

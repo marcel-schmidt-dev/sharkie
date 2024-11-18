@@ -8,7 +8,7 @@ export default class Coin {
         this.height = 50;
         this.frameIndex = 0;
         this.tickCount = 0;
-        this.ticksPerFrame = 20; // Geschwindigkeit der Animation
+        this.ticksPerFrame = 20;
         this.frames = [
             '/assets/marks/1. Coins/1.png',
             '/assets/marks/1. Coins/2.png',
@@ -24,6 +24,7 @@ export default class Coin {
             };
             return img;
         });
+        this.hitbox = { x: this.x, y: this.y, width: this.width, height: this.height };
     }
 
     update() {
@@ -33,6 +34,7 @@ export default class Coin {
             this.tickCount = 0;
             this.frameIndex = (this.frameIndex + 1) % this.frames.length;
         }
+        this.hitbox = { x: this.x, y: this.y, width: this.width, height: this.height };
     }
 
     draw(ctx) {
@@ -46,18 +48,9 @@ export default class Coin {
         return this.x + this.width > 0 && this.x < canvas.width && this.y + this.height > 0 && this.y < canvas.height;
     }
 
-    getHitbox() {
-        return {
-            x: this.x,
-            y: this.y,
-            width: this.width,
-            height: this.height
-        };
-    }
-
     isCollidingWith(other) {
-        const coinHitbox = this.getHitbox();
-        const otherHitbox = other.getHitbox();
+        const coinHitbox = this.hitbox;
+        const otherHitbox = other.hitbox;
         return (
             coinHitbox.x < otherHitbox.x + otherHitbox.width &&
             coinHitbox.x + coinHitbox.width > otherHitbox.x &&

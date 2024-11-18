@@ -1,4 +1,6 @@
 import { loadImage } from '../main';
+import Coin from './coin';
+import Poison from './poison';
 
 export default class Enemy {
     constructor(animations) {
@@ -6,7 +8,6 @@ export default class Enemy {
             throw new Error('Animations must be provided');
         }
         this.canvas = document.getElementById('canvas');
-        this.rect = this.canvas.getBoundingClientRect();
         this.animations = animations;
         this.currentAnimation = animations.hasOwnProperty('transition') ? 'transition' : 'swim';
         this.frames = this.loadImages(this.animations[this.currentAnimation]);
@@ -16,10 +17,11 @@ export default class Enemy {
         this.isLoaded = this.frames.length > 0;
         this.isDying = false;
         this.health = 2; // Standard-Health-Wert
-        this.x = 0; // Standardwert, sollte in der Unterklasse gesetzt werden
-        this.y = 0; // Standardwert, sollte in der Unterklasse gesetzt werden
-        this.width = 100; // Standardwert, sollte in der Unterklasse gesetzt werden
-        this.height = 100; // Standardwert, sollte in der Unterklasse gesetzt werden
+        this.x = 0;
+        this.y = 0;
+        this.width = 100;
+        this.height = 100;
+        this.hitbox = { x: 0, y: 0, width: 0, height: 0 };
     }
 
     loadImages(paths) {
@@ -51,54 +53,48 @@ export default class Enemy {
     }
 
     drawHitbox(ctx) {
-        const hitbox = this.getHitbox();
         ctx.strokeStyle = 'red';
         ctx.lineWidth = 2;
-        ctx.strokeRect(hitbox.x, hitbox.y, hitbox.width, hitbox.height);
+        ctx.strokeRect(this.hitbox.x, this.hitbox.y, this.hitbox.width, this.hitbox.height);
     }
 
     handleCollisionWithBullet(bullet) {
-        if (this.checkVisibility()) {
-            this.health -= bullet.damage; // Reduziere den health-Wert um den Schaden der Kugel
-            if (this.health <= 0) {
-                this.die();
-            }
+        if (!this.isInBounds()) {
+            return;
+        }
+        this.health -= bullet.damage;
+        if (this.health <= 0 && !this.isDying) {
+            this.die();
         }
     }
 
     die() {
-        console.log(`${this.color} Enemy died!`);
         this.isDying = true;
-        if (this.animations.die) {
-            this.frames = this.loadImages(this.animations.die);
-            this.currentAnimation = 'die';
-            this.currentFrameIndex = 0;
-            this.frameTick = 0;
-        }
-    }
+        this.frames = this.animations.die.map(src => {
+            const img = loadImage(src);
+            img.onload = () => {
+                this.isLoaded = true;
+            };
+            img.onerror = () => {
+                img.broken = true;
+            };
+            return img;
+        });
+        this.currentAnimation = 'die';
+        this.currentFrameIndex = 0;
+        this.frameTick = 0;
 
-    getHitbox() {
-        if (this.isDying) {
-            return { x: 0, y: 0, width: 0, height: 0 }; // Return an empty hitbox when dying
+        if (this.constructor.name === 'PufferFish') {
+            const coin = new Coin(this.x, this.y);
+            this.game.coins.push(coin);
         }
-        return {
-            x: this.x + 25,
-            y: this.y + 225,
-            width: this.width - 50,
-            height: this.height - 300
-        };
+        else if (this.constructor.name === 'JellyFish') {
+            const poison = new Poison(this.x, this.y);
+            this.game.poisons.push(poison);
+        }
     }
 
     isInBounds() {
-        return this.x + this.width > 0;
-    }
-
-    checkVisibility() {
-        return (
-            this.x + this.width > 0 &&
-            this.x < this.rect.width &&
-            this.y + this.height > 0 &&
-            this.y < this.rect.height
-        );
+        return this.x + this.width > 0 && this.y + this.height > 0;
     }
 }

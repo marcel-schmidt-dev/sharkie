@@ -1,6 +1,5 @@
-import { GAME_SPEED, loadImage } from '../main.js';
+import { GAME_SPEED } from '../main.js';
 import Enemy from './Enemy';
-import Poison from './poison.js';
 
 const animations = {
     purple: {
@@ -37,17 +36,18 @@ export default class JellyFish extends Enemy {
         this.type = type;
         this.width = 150;
         this.height = 150;
-        this.health = 5;
+        this.health = 1;
         this.speed = (type === 'green' || type === 'pink') ? 6 * GAME_SPEED : 4 * GAME_SPEED; // Geschwindigkeit anpassen
-        this.frameSpeed = 12.5 / GAME_SPEED; // Frame-Geschwindigkeit anpassen
+        this.frameSpeed = 12.5 / GAME_SPEED;
         this.tickCount = 0;
-        this.x = canvas.width; // Startposition am rechten Rand des Canvas
-        this.y = Math.random() * (canvas.height - this.height); // Zufällige y-Position
+        this.x = canvas.width;
+        this.y = Math.random() * (canvas.height - this.height);
+        this.hitbox;
     }
 
     update() {
         if (this.isDying) {
-            this.y -= this.speed / 2; // Adjust the speed as needed
+            this.y -= this.speed / 2;
             this.frameTick++;
             if (this.frameTick >= this.frameSpeed) {
                 this.frameTick = 0;
@@ -67,42 +67,11 @@ export default class JellyFish extends Enemy {
             }
         }
 
-    }
-
-    getHitbox() {
-        if (this.isDying) {
-            return { x: 0, y: 0, width: 0, height: 0 }; // Return an empty hitbox when dying
-        }
-        return {
-            x: this.x + 20,
-            y: this.y + 15,
-            width: this.width - 40,
-            height: this.height - 40
-        };
+        this.hitbox = { x: this.x + 20, y: this.y + 15, width: this.width - 40, height: this.height - 40 };
     }
 
     onCollisionWithBullet() {
         this.health--;
         if (this.health <= 0) this.die();
-    }
-
-    die() {
-        this.isDying = true;
-        this.frames = this.animations.die.map(src => {
-            const img = loadImage(src);
-            img.onload = () => {
-                this.isLoaded = true;
-            };
-            img.onerror = () => {
-                img.broken = true;
-            };
-            return img;
-        });
-        this.currentAnimation = 'die';
-        this.currentFrameIndex = 0;
-        this.frameTick = 0;
-
-        const poison = new Poison(this.x, this.y);
-        this.game.poisons.push(poison);
     }
 }

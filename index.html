@@ -8,7 +8,30 @@
   </head>
   <body>
     <div id="app">
+      <div class="ui">
+        <div class="health"><img src="/assets/marks/life.png" /><span id="health">3</span></div>
+        <div class="score"><img src="/assets/marks/coin.png" /><span id="score">0</span></div>
+        <div class="potions"><img src="/assets/marks/poison.png" /><span id="potions">0</span></div>
+      </div>
       <canvas id="canvas" width="1280" height="720"></canvas>
+      <div class="btn-group">
+        <div class="btn">
+          <img src="/assets/buttons/w.svg" />
+          <div>UP</div>
+        </div>
+        <div class="btn">
+          <img src="/assets/buttons/s.svg" />
+          <div>DOWN</div>
+        </div>
+        <div class="btn">
+          <img src="/assets/buttons/e.svg" />
+          <div>SPECIAL ATTACK</div>
+        </div>
+        <div class="btn">
+          <img src="/assets/buttons/space.svg" />
+          <div>SHOOT</div>
+        </div>
+      </div>
     </div>
     <script type="module" src="/main.js"></script>
   </body>
