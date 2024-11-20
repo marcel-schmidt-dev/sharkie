@@ -15,21 +15,12 @@ export default class Boss extends Enemy {
         this.width = 500;
         this.height = 500;
         this.speed = 1 * GAME_SPEED;
-        this.health = 10;
+        this.health = 20;
         this.x = canvas.width - this.width;
         this.y = 0;
         this.movingDown = true;
         this.attackPhase = null; // 'announce', 'attack', 'retreat'
-        this.standbyTime = 500; // Ankündigungszeit in Millisekunden
-        this.resetState();
-
-        this.currentAnimation = 'transition';
-        this.frameTick = 0;
-        this.frameSpeed = 15 / GAME_SPEED;
-        this.attackFrameSpeed = 5 / GAME_SPEED;
-    }
-
-    resetState() {
+        this.standbyTime = 500;
         this.isAttacking = false;
         this.isReturning = false;
         this.attackCooldown = this.getRandomCooldown();
@@ -37,6 +28,11 @@ export default class Boss extends Enemy {
         this.targetPosition = null;
         this.lastUpdateTime = Date.now();
         this.hitbox = this.createHitbox();
+
+        this.currentAnimation = 'transition';
+        this.frameTick = 0;
+        this.frameSpeed = 15 / GAME_SPEED;
+        this.attackFrameSpeed = 5 / GAME_SPEED;
     }
 
     createHitbox() {
@@ -49,7 +45,7 @@ export default class Boss extends Enemy {
     }
 
     getRandomCooldown() {
-        return Math.floor(Math.random() * 5000) + 5000; // Zufällige Zeit zwischen 5 und 10 Sekunden
+        return Math.floor(Math.random() * 5000) + 5000;
     }
 
     update() {
@@ -64,6 +60,7 @@ export default class Boss extends Enemy {
         }
 
         this.updateHitbox();
+        this.handleHealthBar();
     }
 
     updateHitbox() {
@@ -99,7 +96,7 @@ export default class Boss extends Enemy {
     }
 
     startAttack() {
-        this.setPlayerPosition(); // Zielposition einmalig berechnen
+        this.setPlayerPosition();
         this.isAttacking = true;
         this.attackPhase = 'announce';
         this.switchToAnimation('attack');
@@ -108,15 +105,14 @@ export default class Boss extends Enemy {
     }
 
     setPlayerPosition() {
-        const player = this.game.player.hitbox; // Spieler-Hitbox
+        const player = this.game.player.hitbox;
         const bossCenterOffset = {
-            x: this.hitbox.width / 2, // Mitte der Boss-Hitbox
+            x: this.hitbox.width / 2,
             y: this.hitbox.height / 2
         };
 
-        // Berechne die Zielposition basierend auf der Mitte des Spielers
         this.targetPosition = {
-            x: player.x + player.width / 2 - (bossCenterOffset.x - this.width / 4), // Mitte des Spielers - Mitte des Bosses
+            x: player.x + player.width / 2 - (bossCenterOffset.x - this.width / 4),
             y: player.y + player.height / 2 - (bossCenterOffset.y + this.height / 2)
         };
     }
@@ -150,18 +146,15 @@ export default class Boss extends Enemy {
     }
 
     moveToTarget() {
-        const attackSpeed = this.speed * 4; // Angriffs-Geschwindigkeit
+        const attackSpeed = this.speed * 4;
         const directionX = this.targetPosition.x - this.x;
         const directionY = this.targetPosition.y - this.y;
         const distance = Math.sqrt(directionX ** 2 + directionY ** 2);
 
         if (distance <= attackSpeed) {
-            // Ziel erreicht
             this.x = this.targetPosition.x;
             this.y = this.targetPosition.y;
             this.attackPhase = 'retreat';
-        } else {
-            // Normiere den Richtungsvektor und bewege den Boss
         }
         this.x += (directionX / distance) * attackSpeed;
         this.y += (directionY / distance) * attackSpeed;
@@ -179,30 +172,25 @@ export default class Boss extends Enemy {
         const dx = this.originalPosition.x - this.x;
         const dy = this.originalPosition.y - this.y;
 
-        // Gesamtentfernung berechnen
         const distance = Math.sqrt(dx ** 2 + dy ** 2);
         const speed = this.speed * 2;
 
         if (distance > speed) {
-            // Bewegung proportional zur Distanz
             this.x += (dx / distance) * speed;
             this.y += (dy / distance) * speed;
         } else {
-            // Ziel erreicht
             this.x = this.originalPosition.x;
             this.y = this.originalPosition.y;
             this.isReturning = false;
             this.attackCooldown = this.getRandomCooldown();
         }
-
-        // Animation aktualisieren
         this.updateAnimation();
     }
 
 
 
     switchToAnimation(animation) {
-        if (this.currentAnimation !== animation) { // Verhindert unnötige Animationen-Wechsel
+        if (this.currentAnimation !== animation) {
             this.currentAnimation = animation;
             this.frames = this.loadImages(animations[animation]);
             this.currentFrameIndex = 0;
@@ -220,11 +208,10 @@ export default class Boss extends Enemy {
             this.frameTick = 0;
 
             if (this.currentAnimation === 'transition') {
-                // Gehe zu 'swim', wenn 'transition' abgeschlossen ist
                 if (this.currentFrameIndex < this.frames.length - 1) {
                     this.currentFrameIndex++;
                 } else {
-                    this.switchToAnimation('swim'); // Wechsel zu 'swim', wenn 'transition' fertig ist
+                    this.switchToAnimation('swim');
                 }
             } else {
                 this.currentFrameIndex = (this.currentFrameIndex + 1) % this.frames.length;
@@ -252,5 +239,12 @@ export default class Boss extends Enemy {
         if (this.health <= 0) {
             this.die();
         }
+    }
+
+    handleHealthBar() {
+        const healthBar = document.getElementById('boss-bar');
+        const maxHealth = 20;
+        const healthPercentage = (this.health / maxHealth) * 100;
+        healthBar.style.width = `${healthPercentage}%`;
     }
 }

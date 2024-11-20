@@ -3,7 +3,7 @@ import JellyFish from './JellyFish';
 import PufferFish from './PufferFish';
 import Player from './Player';
 import BackgroundLayer from './BackgroundLayer';
-import Boss from './Boss'; // Importiere die Boss-Klasse
+import Boss from './Boss';
 
 export default class Game {
     constructor(ctx) {
@@ -15,10 +15,10 @@ export default class Game {
         this.poisons = [];
         this.lastEnemySpawn = Date.now();
         this.isRunning = true;
-        this.backgroundLayerCounter = 0; // Zähler für die Hintergrundebenen
-        this.levelTimeOut = 2; // Level-Timeout auf 60 Sekunden gesetzt
-        this.bossSpawned = false; // Flagge, um zu überprüfen, ob der Boss gespawnt wurde
-        this.boss = null; // Referenz auf den Boss
+        this.backgroundLayerCounter = 0;
+        this.levelTimeOut = 60;
+        this.bossSpawned = false;
+        this.boss = null;
 
         this.backgroundLayers = [
             new BackgroundLayer('/assets/background/Layers/water/D.png', 0.5 * GAME_SPEED),
@@ -27,13 +27,12 @@ export default class Game {
             new BackgroundLayer('/assets/background/Layers/floor/D.png', 2 * GAME_SPEED)
         ];
 
-        // Statisches Lichtbild
         this.lightImage = new Image();
         this.lightImage.src = '/assets/background/Layers/light/COMPLETO.png';
-        this.lightImageX = canvas.width; // Startposition des Lichtbilds rechts außerhalb des Canvas
-        this.lightImageSpeed = 1 * GAME_SPEED; // Geschwindigkeit des Lichtbilds
+        this.lightImageX = canvas.width;
+        this.lightImageSpeed = 1 * GAME_SPEED;
 
-        this.startTime = Date.now(); // Startzeit des Spiels
+        this.startTime = Date.now();
     }
 
     start() {
@@ -43,22 +42,18 @@ export default class Game {
     update() {
         this.ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // Überprüfe, ob das Level-Timeout erreicht wurde
         const elapsedTime = (Date.now() - this.startTime) / 1000;
         if (elapsedTime >= this.levelTimeOut) {
-            // Setze die Geschwindigkeit der Hintergrundebenen auf 0
             this.backgroundLayers.forEach(layer => {
                 layer.speed = 0;
             });
-            this.lightImageSpeed = 0; // Stoppe auch das Lichtbild
+            this.lightImageSpeed = 0;
 
-            // Deaktiviere die Hitboxen der bestehenden Gegner und lasse sie aus dem Bild schwimmen
             this.enemies.forEach(enemy => {
                 enemy.hitbox = { x: -100, y: -100, width: 0, height: 0 };
                 enemy.x -= GAME_SPEED * 3;
             });
 
-            // Spawne den Boss, wenn er noch nicht gespawnt wurde
             if (!this.bossSpawned) {
                 this.boss = new Boss(this);
                 this.bossSpawned = true;
@@ -122,10 +117,8 @@ export default class Game {
             }
         });
 
-        // Collision checks
         this.checkCollisions();
 
-        // Update and draw static light image
         this.lightImageX -= this.lightImageSpeed;
         if (this.lightImageX + this.lightImage.width < 0) {
             this.lightImageX = canvas.width; // Reset position to the right side
@@ -134,14 +127,12 @@ export default class Game {
             this.ctx.drawImage(this.lightImage, this.lightImageX, 0, this.lightImage.width / 2, canvas.height);
         }
 
-        // Spawn new enemies
         if (elapsedTime < this.levelTimeOut) {
             if (Date.now() - this.lastEnemySpawn > 1000 / GAME_SPEED) {
                 this.spawnEnemy();
                 this.lastEnemySpawn = Date.now();
             }
 
-            // Randomize spawn times
             const minSpawnTime = 500;
             const maxSpawnTime = 1500;
             const randomSpawnTime = Math.random() * (maxSpawnTime - minSpawnTime) + minSpawnTime;
@@ -156,7 +147,7 @@ export default class Game {
     }
 
     showEndScreen(winCondition) {
-        this.isRunning = false; // Stoppe das Spiel
+        this.isRunning = false;
         const endScreen = document.getElementById('end-screen');
         if (winCondition === 'win') {
             endScreen.src = '/assets/buttons/Try again/win.png'

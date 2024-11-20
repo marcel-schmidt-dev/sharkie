@@ -16,7 +16,7 @@ export default class Enemy {
         this.frameSpeed = 20;
         this.isLoaded = this.frames.length > 0;
         this.isDying = false;
-        this.health = 2; // Standard-Health-Wert
+        this.health = 2;
         this.x = 0;
         this.y = 0;
         this.width = 100;

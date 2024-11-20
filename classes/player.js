@@ -13,12 +13,12 @@ export default class Player {
         this.down = false;
         this.isShooting = false;
         this.isSpecialShooting = false;
-        this.isInCollision = false; // Eine Variable für Kollisionen und Animationen
-        this.isDead = false; // Spielerstatus hinzugefügt
+        this.isInCollision = false;
+        this.isDead = false;
         this.collisionAnimationTimer = 0;
         this.swimFrames = this.loadFrames('/assets/sharkie/swim/', 6);
         this.shootFrames = this.loadFrames('/assets/sharkie/4.Attack/Bubble trap/Op2 (Without Bubbles)/', 7);
-        this.hitFrames = this.loadFrames('/assets/sharkie/4.Attack/Fin slap/', 8);
+        this.hitFrames = this.loadFrames('/assets/sharkie/4.Attack/Fin slap/', 6);
         this.jellyFishCollisionFrames = this.loadFrames('/assets/sharkie/5.Hurt/2.Electric shock/', 3);
         this.pufferFishCollisionFrames = this.loadFrames('/assets/sharkie/5.Hurt/1.Poisoned/', 4);
         this.deathByJellyFishFrames = this.loadFrames('/assets/sharkie/6.dead/2.Electro_shock/', 10);
@@ -34,12 +34,12 @@ export default class Player {
         this.animationQueue = [];
         this.specialBullet = null;
         this.potions = 0;
-        this.health = 1; // Spieler hat 3 Leben
+        this.health = 1;
         this.coins = 0;
         this.isBuffed = false;
         document.addEventListener("keydown", this.move.bind(this));
         document.addEventListener("keyup", this.stop.bind(this));
-        document.addEventListener("keypress", this.HandleBuff.bind(this)); // Hinzugefügt
+        document.addEventListener("keypress", this.HandleBuff.bind(this));
         this.updateUI();
     }
 
@@ -67,7 +67,7 @@ export default class Player {
     }
 
     move(e) {
-        if (this.isDead) return; // Keine Eingaben, wenn der Spieler tot ist
+        if (this.isDead) return;
         switch (e.key) {
             case "ArrowUp":
             case "w":
@@ -94,7 +94,7 @@ export default class Player {
     }
 
     stop(e) {
-        if (this.isDead) return; // Keine Eingaben, wenn der Spieler tot ist
+        if (this.isDead) return;
         switch (e.key) {
             case "ArrowUp":
             case "w":
@@ -164,14 +164,13 @@ export default class Player {
                 this.tickCount = 0;
                 this.currentFrame = Math.min(this.currentFrame + 1, this.currentFrames.length - 1);
 
-                // Todesanimation abgeschlossen
                 if (this.currentFrame === this.currentFrames.length - 1) {
                     setTimeout(() => {
                         this.game.showEndScreen('lose');
                     }, 2000);
                 }
             }
-            return; // Stoppe weitere Logik
+            return;
         }
 
         if (this.game.boss && this.game.boss.health <= 0) {
@@ -181,14 +180,13 @@ export default class Player {
                 this.tickCount = 0;
                 this.currentFrame = Math.min(this.currentFrame + 1, this.currentFrames.length - 1);
 
-                // Todesanimation abgeschlossen
                 if (this.currentFrame === this.currentFrames.length - 1) {
                     setTimeout(() => {
                         this.game.showEndScreen('win');
                     }, 3000);
                 }
             }
-            return; // Stoppe weitere Logik
+            return;
         };
 
 
@@ -263,13 +261,13 @@ export default class Player {
     }
 
     handleCollisionWithEnemy(enemy) {
-        if (enemy.isDying || this.isInCollision || this.isDead) return; // Keine weitere Kollisionen verarbeiten, wenn tot
-        this.health--; // Ziehe ein Leben ab
+        if (enemy.isDying || this.isInCollision || this.isDead) return;
+        this.health--;
         if (this.specialBullet) {
             this.game.bullets.pop();
         }
         if (this.health <= 0) {
-            this.isDead = true; // Spielerstatus auf tot setzen
+            this.isDead = true;
             this.startCollisionAnimation(enemy.constructor.name === 'JellyFish' ? 'deathByJellyFish' : 'deathByPufferFish');
         } else {
             this.startCollisionAnimation(enemy.constructor.name);

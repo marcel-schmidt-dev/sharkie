@@ -18,31 +18,54 @@
         </div>
         <canvas id="canvas"></canvas>
         <img id="end-screen" src="/assets/buttons/Try again/lose.png" />
-        <button id="retry"><img src="/assets/buttons/Try again/Recurso 17.png" alt="" /></button>
+        <button id="retry"><img src="/assets/buttons/Try again/Recurso 17.png" /></button>
+        <img id="start-screen" src="/assets/background/title.png" />
+        <button id="start"><img src="/assets/buttons/Start/2.png" /></button>
+        <div id="touch-controls">
+          <div class="left">
+            <button><img src="/assets/buttons/touch-up.svg" /></button>
+            <button><img src="/assets/buttons/touch-down.svg" /></button>
+          </div>
+          <div class="right">
+            <button><img src="/assets/buttons/touch-potion.svg" /></button>
+            <button><img src="/assets/buttons/touch-special.svg" /></button>
+            <button><img src="/assets/buttons/touch-attack.svg" /></button>
+          </div>
+        </div>
+        <div id="boss-bar-container">
+          <img src="/assets/enemy/boss/floating/1.png" />
+          <div class="boss-bar">
+            <div id="boss-bar"></div>
+          </div>
+        </div>
       </div>
       <div class="btn-group">
-        <div class="btn">
-          <img src="/assets/buttons/w.svg" />
-          <div>UP</div>
-        </div>
-        <div class="btn">
-          <img src="/assets/buttons/s.svg" />
-          <div>DOWN</div>
-        </div>
-        <div class="btn">
-          <img src="/assets/buttons/e.svg" />
-          <div>SPECIAL ATTACK</div>
-        </div>
-        <div class="btn">
-          <img src="/assets/buttons/d.svg" />
-          <div>Consume Potion</div>
-        </div>
-        <div class="btn">
-          <img src="/assets/buttons/space.svg" />
-          <div>SHOOT</div>
+        <button id="toggle"><img src="/assets/buttons/controls.svg" /></button>
+        <div id="controls">
+          <div class="btn">
+            <img src="/assets/buttons/w.svg" />
+            <div>UP</div>
+          </div>
+          <div class="btn">
+            <img src="/assets/buttons/s.svg" />
+            <div>DOWN</div>
+          </div>
+          <div class="btn">
+            <img src="/assets/buttons/e.svg" />
+            <div>SPECIAL ATTACK</div>
+          </div>
+          <div class="btn">
+            <img src="/assets/buttons/d.svg" />
+            <div>Consume Potion</div>
+          </div>
+          <div class="btn">
+            <img src="/assets/buttons/space.svg" />
+            <div>SHOOT</div>
+          </div>
         </div>
       </div>
     </div>
+    <img src="/assets/background/rotate.png" id="rotate" />
     <script type="module" src="/main.js"></script>
   </body>
 </html>
