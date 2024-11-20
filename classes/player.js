@@ -34,7 +34,7 @@ export default class Player {
         this.animationQueue = [];
         this.specialBullet = null;
         this.potions = 0;
-        this.health = 1;
+        this.health = 3;
         this.coins = 0;
         this.isBuffed = false;
         document.addEventListener("keydown", this.move.bind(this));

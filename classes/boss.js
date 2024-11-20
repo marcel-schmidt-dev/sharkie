@@ -15,7 +15,7 @@ export default class Boss extends Enemy {
         this.width = 500;
         this.height = 500;
         this.speed = 1 * GAME_SPEED;
-        this.health = 20;
+        this.health = 100;
         this.x = canvas.width - this.width;
         this.y = 0;
         this.movingDown = true;
@@ -49,6 +49,9 @@ export default class Boss extends Enemy {
     }
 
     update() {
+        console.log(this.health);
+
+        this.handleHealthBar();
         if (this.isDying) {
             this.handleDying();
         } else if (this.isReturning) {
@@ -58,9 +61,7 @@ export default class Boss extends Enemy {
         } else {
             this.handleIdle();
         }
-
         this.updateHitbox();
-        this.handleHealthBar();
     }
 
     updateHitbox() {
@@ -243,7 +244,7 @@ export default class Boss extends Enemy {
 
     handleHealthBar() {
         const healthBar = document.getElementById('boss-bar');
-        const maxHealth = 20;
+        const maxHealth = 100;
         const healthPercentage = (this.health / maxHealth) * 100;
         healthBar.style.width = `${healthPercentage}%`;
     }

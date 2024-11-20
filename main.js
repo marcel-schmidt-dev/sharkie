@@ -24,19 +24,13 @@ export function loadImage(src) {
 let game = new Game(ctx);
 
 function resetGame() {
-    const endScreen = document.getElementById('end-screen');
-    endScreen.style.display = 'none';
-    const retryBtn = document.getElementById('retry');
-    retryBtn.style.display = 'none';
+    document.getElementById('start-screen').style.display = 'none';
+    document.getElementById('end-screen').style.display = 'none';
+    document.getElementById('retry').style.display = 'none';
+    document.getElementById('highscore').style.display = 'none';
+    document.getElementById('start').style.display = 'none';
+    document.getElementById('boss-bar-container').style.display = 'none';
     game = new Game(ctx);
-    game.start();
-}
-
-function startGame() {
-    const startScreen = document.getElementById('start-screen');
-    startScreen.style.display = 'none';
-    const startBtn = document.getElementById('start');
-    startBtn.style.display = 'none';
     game.start();
 }
 
@@ -61,5 +55,5 @@ handleDeviceChange(touchMediaQuery);
 
 touchMediaQuery.addEventListener('change', handleDeviceChange);
 document.getElementById('retry').addEventListener('click', resetGame);
-document.getElementById('start').addEventListener('click', startGame);
+document.getElementById('start').addEventListener('click', resetGame);
 document.getElementById('toggle').addEventListener('click', toggleControls);

@@ -16,7 +16,7 @@ export default class Game {
         this.lastEnemySpawn = Date.now();
         this.isRunning = true;
         this.backgroundLayerCounter = 0;
-        this.levelTimeOut = 60;
+        this.levelTimeOut = 20;
         this.bossSpawned = false;
         this.boss = null;
 
@@ -57,6 +57,7 @@ export default class Game {
             if (!this.bossSpawned) {
                 this.boss = new Boss(this);
                 this.bossSpawned = true;
+                document.getElementById('boss-bar-container').style.display = 'flex';
             }
         }
 
@@ -151,6 +152,10 @@ export default class Game {
         const endScreen = document.getElementById('end-screen');
         if (winCondition === 'win') {
             endScreen.src = '/assets/buttons/Try again/win.png'
+            const highscore = document.getElementById('highscore');
+
+            highscore.innerText = `you scored: ${this.player.coins}`
+            highscore.style.display = 'block';
         } else {
             endScreen.src = '/assets/buttons/Try again/lose.png'
         }
