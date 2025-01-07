@@ -1,6 +1,7 @@
 import { loadImage } from '../main';
 import Coin from './coin';
 import Poison from './poison';
+import playSound from '../utils/sound';
 
 export default class Enemy {
     constructor(animations) {
@@ -49,7 +50,7 @@ export default class Enemy {
         }
 
         // Draw hitbox for debugging
-        this.drawHitbox(ctx);
+        // this.drawHitbox(ctx);
     }
 
     drawHitbox(ctx) {
@@ -84,13 +85,18 @@ export default class Enemy {
         this.currentFrameIndex = 0;
         this.frameTick = 0;
 
-        if (this.constructor.name === 'PufferFish') {
+        if (this.fishType === 'pufferFish') {
             const coin = new Coin(this.x, this.y);
             this.game.coins.push(coin);
+            playSound('mobDie');
         }
-        else if (this.constructor.name === 'JellyFish') {
+        else if (this.fishType === 'jellyFish') {
             const poison = new Poison(this.x, this.y);
             this.game.poisons.push(poison);
+            playSound('mobDie');
+        }
+        else {
+            playSound('bossDie');
         }
     }
 

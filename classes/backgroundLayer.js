@@ -9,8 +9,9 @@ export default class BackgroundLayer {
         this.height = canvas.height;
     }
 
-    update() {
-        this.x -= this.speed;
+    update(deltaTime) {
+        this.x -= this.speed * deltaTime;
+
         if (this.x <= -this.width) {
             this.x = 0;
         }

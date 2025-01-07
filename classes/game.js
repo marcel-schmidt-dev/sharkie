@@ -4,6 +4,7 @@ import PufferFish from './PufferFish';
 import Player from './Player';
 import BackgroundLayer from './BackgroundLayer';
 import Boss from './Boss';
+import { backgroundAudio } from '../main.js';
 
 export default class Game {
     constructor(ctx) {
@@ -14,35 +15,51 @@ export default class Game {
         this.coins = [];
         this.poisons = [];
         this.lastEnemySpawn = Date.now();
-        this.isRunning = true;
+        this.isRunning = false;
         this.backgroundLayerCounter = 0;
-        this.levelTimeOut = 20;
+        this.levelTimeOut = 40; //DEFAULT 40
         this.bossSpawned = false;
         this.boss = null;
+        this.endScreenVisible = false;
 
         this.backgroundLayers = [
-            new BackgroundLayer('/assets/background/Layers/water/D.png', 0.5 * GAME_SPEED),
-            new BackgroundLayer('/assets/background/Layers/fondo2/D.png', 1 * GAME_SPEED),
-            new BackgroundLayer('/assets/background/Layers/fondo1/D.png', 1.5 * GAME_SPEED),
-            new BackgroundLayer('/assets/background/Layers/floor/D.png', 2 * GAME_SPEED)
+            new BackgroundLayer('./assets/background/Layers/water/D.png', 100 * GAME_SPEED),
+            new BackgroundLayer('./assets/background/Layers/fondo2/D.png', 200 * GAME_SPEED),
+            new BackgroundLayer('./assets/background/Layers/fondo1/D.png', 300 * GAME_SPEED),
+            new BackgroundLayer('./assets/background/Layers/floor/D.png', 400 * GAME_SPEED)
         ];
 
         this.lightImage = new Image();
-        this.lightImage.src = '/assets/background/Layers/light/COMPLETO.png';
+        this.lightImage.src = './assets/background/Layers/light/COMPLETO.png';
         this.lightImageX = canvas.width;
         this.lightImageSpeed = 1 * GAME_SPEED;
 
         this.startTime = Date.now();
+        this.lastUpdateTime = Date.now();
     }
 
     start() {
+        this.isRunning = true;
         requestAnimationFrame(() => this.update());
+        backgroundAudio.play();
+    }
+
+    stop() {
+        this.isRunning = false;
+        document.removeEventListener("keydown", this.player.move.bind(this.player));
+        document.removeEventListener("keyup", this.player.stop.bind(this.player));
+        document.removeEventListener("keypress", this.player.HandleBuff.bind(this.player));
+        backgroundAudio.pause();
     }
 
     update() {
+        const now = Date.now();
+        const deltaTime = (now - this.lastUpdateTime) / 1000;
+        this.lastUpdateTime = now;
+
         this.ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        const elapsedTime = (Date.now() - this.startTime) / 1000;
+        const elapsedTime = (now - this.startTime) / 1000;
         if (elapsedTime >= this.levelTimeOut) {
             this.backgroundLayers.forEach(layer => {
                 layer.speed = 0;
@@ -63,7 +80,7 @@ export default class Game {
 
         // Background layers
         this.backgroundLayers.forEach(layer => {
-            layer.update();
+            layer.update(deltaTime);
             layer.draw(this.ctx);
         });
 
@@ -72,7 +89,7 @@ export default class Game {
             if (bullet.isCollided) {
                 return false;
             }
-            bullet.update();
+            bullet.update(deltaTime);
             bullet.draw(this.ctx);
             return bullet.isInBounds();
         });
@@ -80,24 +97,24 @@ export default class Game {
         // Enemies
         this.enemies = this.enemies.filter(enemy => enemy.isInBounds());
         this.enemies.forEach(enemy => {
-            enemy.update();
+            enemy.update(deltaTime);
             enemy.draw(this.ctx);
         });
 
         // Player
-        this.player.update();
+        this.player.update(deltaTime);
         this.player.draw(this.ctx);
 
         // Boss
         if (this.bossSpawned) {
-            this.boss.update();
+            this.boss.update(deltaTime);
             this.boss.draw(this.ctx);
         }
 
         // Coins
         this.coins = this.coins.filter(coin => coin.isInBounds());
         this.coins.forEach(coin => {
-            coin.update();
+            coin.update(deltaTime);
             coin.draw(this.ctx);
             if (coin.isCollidingWith(this.player)) {
                 this.coins.splice(this.coins.indexOf(coin), 1);
@@ -109,7 +126,7 @@ export default class Game {
         // Poisons
         this.poisons = this.poisons.filter(poison => poison.isInBounds());
         this.poisons.forEach(poison => {
-            poison.update();
+            poison.update(deltaTime);
             poison.draw(this.ctx);
             if (poison.isCollidingWith(this.player)) {
                 this.poisons.splice(this.poisons.indexOf(poison), 1);
@@ -148,16 +165,16 @@ export default class Game {
     }
 
     showEndScreen(winCondition) {
-        this.isRunning = false;
+        this.stop();
         const endScreen = document.getElementById('end-screen');
         if (winCondition === 'win') {
-            endScreen.src = '/assets/buttons/Try again/win.png'
+            endScreen.src = './assets/buttons/Try again/win.png'
             const highscore = document.getElementById('highscore');
 
             highscore.innerText = `you scored: ${this.player.coins}`
             highscore.style.display = 'block';
         } else {
-            endScreen.src = '/assets/buttons/Try again/lose.png'
+            endScreen.src = './assets/buttons/Try again/lose.png'
         }
         endScreen.style.display = 'block';
         const retryBtn = document.getElementById('retry');

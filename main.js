@@ -6,6 +6,10 @@ canvas.width = canvas.clientWidth;
 canvas.height = canvas.clientHeight;
 const ctx = canvas.getContext("2d");
 export const GAME_SPEED = 0.8; // GAME SPEED
+export let muted = false;
+export const backgroundAudio = new Audio('./assets/sounds/background.mp3');
+backgroundAudio.loop = true;
+backgroundAudio.volume = 0.2;
 
 const imageCache = {};
 
@@ -21,16 +25,16 @@ export function loadImage(src) {
     return img;
 }
 
-let game = new Game(ctx);
+let game;
 
 function resetGame() {
+    game = new Game(ctx);
     document.getElementById('start-screen').style.display = 'none';
     document.getElementById('end-screen').style.display = 'none';
     document.getElementById('retry').style.display = 'none';
     document.getElementById('highscore').style.display = 'none';
     document.getElementById('start').style.display = 'none';
     document.getElementById('boss-bar-container').style.display = 'none';
-    game = new Game(ctx);
     game.start();
 }
 
@@ -51,9 +55,20 @@ function handleDeviceChange(e) {
     }
 }
 
+function toggleSound(e) {
+    e.target.classList.toggle('active');
+    muted = !muted;
+    if (muted) {
+        backgroundAudio.pause();
+    } else {
+        backgroundAudio.play();
+    }
+}
+
 handleDeviceChange(touchMediaQuery);
 
 touchMediaQuery.addEventListener('change', handleDeviceChange);
 document.getElementById('retry').addEventListener('click', resetGame);
 document.getElementById('start').addEventListener('click', resetGame);
 document.getElementById('toggle').addEventListener('click', toggleControls);
+document.querySelector('.sound').addEventListener('click', (event) => toggleSound(event));

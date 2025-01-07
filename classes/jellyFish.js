@@ -3,20 +3,20 @@ import Enemy from './Enemy';
 
 const animations = {
     purple: {
-        swim: ['/assets/enemy/jellyFish/regular/lila1.png', '/assets/enemy/jellyFish/regular/lila2.png', '/assets/enemy/jellyFish/regular/lila3.png', '/assets/enemy/jellyFish/regular/lila4.png'],
-        die: ['/assets/enemy/jellyFish/dead/Lila/L1.png', '/assets/enemy/jellyFish/dead/Lila/L2.png', '/assets/enemy/jellyFish/dead/Lila/L3.png', '/assets/enemy/jellyFish/dead/Lila/L4.png']
+        swim: ['./assets/enemy/jellyFish/regular/lila1.png', './assets/enemy/jellyFish/regular/lila2.png', './assets/enemy/jellyFish/regular/lila3.png', './assets/enemy/jellyFish/regular/lila4.png'],
+        die: ['./assets/enemy/jellyFish/dead/Lila/L1.png', './assets/enemy/jellyFish/dead/Lila/L2.png', './assets/enemy/jellyFish/dead/Lila/L3.png', './assets/enemy/jellyFish/dead/Lila/L4.png']
     },
     yellow: {
-        swim: ['/assets/enemy/jellyFish/regular/yellow1.png', '/assets/enemy/jellyFish/regular/yellow2.png', '/assets/enemy/jellyFish/regular/yellow3.png', '/assets/enemy/jellyFish/regular/yellow4.png'],
-        die: ['/assets/enemy/jellyFish/dead/Yellow/y1.png', '/assets/enemy/jellyFish/dead/Yellow/y2.png', '/assets/enemy/jellyFish/dead/Yellow/y3.png', '/assets/enemy/jellyFish/dead/Yellow/y4.png']
+        swim: ['./assets/enemy/jellyFish/regular/yellow1.png', './assets/enemy/jellyFish/regular/yellow2.png', './assets/enemy/jellyFish/regular/yellow3.png', './assets/enemy/jellyFish/regular/yellow4.png'],
+        die: ['./assets/enemy/jellyFish/dead/Yellow/y1.png', './assets/enemy/jellyFish/dead/Yellow/y2.png', './assets/enemy/jellyFish/dead/Yellow/y3.png', './assets/enemy/jellyFish/dead/Yellow/y4.png']
     },
     green: {
-        swim: ['/assets/enemy/jellyFish/dangerous/green1.png', '/assets/enemy/jellyFish/dangerous/green2.png', '/assets/enemy/jellyFish/dangerous/green3.png', '/assets/enemy/jellyFish/dangerous/green4.png'],
-        die: ['/assets/enemy/jellyFish/dead/green/g1.png', '/assets/enemy/jellyFish/dead/green/g2.png', '/assets/enemy/jellyFish/dead/green/g3.png', '/assets/enemy/jellyFish/dead/green/g4.png']
+        swim: ['./assets/enemy/jellyFish/dangerous/green1.png', './assets/enemy/jellyFish/dangerous/green2.png', './assets/enemy/jellyFish/dangerous/green3.png', './assets/enemy/jellyFish/dangerous/green4.png'],
+        die: ['./assets/enemy/jellyFish/dead/green/g1.png', './assets/enemy/jellyFish/dead/green/g2.png', './assets/enemy/jellyFish/dead/green/g3.png', './assets/enemy/jellyFish/dead/green/g4.png']
     },
     pink: {
-        swim: ['/assets/enemy/jellyFish/dangerous/pink1.png', '/assets/enemy/jellyFish/dangerous/pink2.png', '/assets/enemy/jellyFish/dangerous/pink3.png', '/assets/enemy/jellyFish/dangerous/pink4.png'],
-        die: ['/assets/enemy/jellyFish/dead/Pink/P1.png', '/assets/enemy/jellyFish/dead/Pink/P2.png', '/assets/enemy/jellyFish/dead/Pink/P3.png', '/assets/enemy/jellyFish/dead/Pink/P4.png']
+        swim: ['./assets/enemy/jellyFish/dangerous/pink1.png', './assets/enemy/jellyFish/dangerous/pink2.png', './assets/enemy/jellyFish/dangerous/pink3.png', './assets/enemy/jellyFish/dangerous/pink4.png'],
+        die: ['./assets/enemy/jellyFish/dead/Pink/P1.png', './assets/enemy/jellyFish/dead/Pink/P2.png', './assets/enemy/jellyFish/dead/Pink/P3.png', './assets/enemy/jellyFish/dead/Pink/P4.png']
     }
 };
 
@@ -34,21 +34,22 @@ export default class JellyFish extends Enemy {
 
         this.game = game;
         this.type = type;
+        this.fishType = 'jellyFish';
         this.width = this.canvas.width / 8;
         this.height = this.canvas.width / 8;
-        this.health = 2;
-        this.speed = (type === 'green' || type === 'pink') ? 6 * GAME_SPEED : 4 * GAME_SPEED; // Geschwindigkeit anpassen
-        this.frameSpeed = 12.5 / GAME_SPEED;
+        this.health = (type === 'green' || type === 'pink') ? 4 : 3;
+        this.speed = (type === 'green' || type === 'pink') ? 1250 * GAME_SPEED : 900 * GAME_SPEED;
+        this.frameSpeed = 0.08;
         this.tickCount = 0;
         this.x = canvas.width;
         this.y = Math.random() * (canvas.height - this.height);
         this.hitbox;
     }
 
-    update() {
+    update(deltaTime) {
         if (this.isDying) {
-            this.y -= this.speed / 2;
-            this.frameTick++;
+            this.y -= (this.speed / 2) * deltaTime;
+            this.frameTick += deltaTime;
             if (this.frameTick >= this.frameSpeed) {
                 this.frameTick = 0;
                 if (this.currentFrameIndex < this.frames.length - 1) {
@@ -56,10 +57,10 @@ export default class JellyFish extends Enemy {
                 }
             }
         } else {
-            this.x -= this.speed;
+            this.x -= this.speed * deltaTime;
 
             if (this.isLoaded) {
-                this.tickCount++;
+                this.tickCount += deltaTime;
                 if (this.tickCount >= this.frameSpeed) {
                     this.tickCount = 0;
                     this.currentFrameIndex = (this.currentFrameIndex + 1) % this.frames.length;

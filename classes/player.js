@@ -1,5 +1,6 @@
 import { GAME_SPEED } from '../main.js';
 import Bullet from './Bullet';
+import playSound from '../utils/sound.js';
 
 export default class Player {
     constructor(game) {
@@ -8,7 +9,7 @@ export default class Player {
         this.height = canvas.width / 5;
         this.x = 50;
         this.y = canvas.height / 2 - this.height / 2;
-        this.speed = 2 * GAME_SPEED;
+        this.speed = 500 * GAME_SPEED;
         this.up = false;
         this.down = false;
         this.isShooting = false;
@@ -16,18 +17,19 @@ export default class Player {
         this.isInCollision = false;
         this.isDead = false;
         this.collisionAnimationTimer = 0;
-        this.swimFrames = this.loadFrames('/assets/sharkie/swim/', 6);
-        this.shootFrames = this.loadFrames('/assets/sharkie/4.Attack/Bubble trap/Op2 (Without Bubbles)/', 7);
-        this.hitFrames = this.loadFrames('/assets/sharkie/4.Attack/Fin slap/', 6);
-        this.jellyFishCollisionFrames = this.loadFrames('/assets/sharkie/5.Hurt/2.Electric shock/', 3);
-        this.pufferFishCollisionFrames = this.loadFrames('/assets/sharkie/5.Hurt/1.Poisoned/', 4);
-        this.deathByJellyFishFrames = this.loadFrames('/assets/sharkie/6.dead/2.Electro_shock/', 10);
-        this.deathByPufferFishFrames = this.loadFrames('/assets/sharkie/6.dead/1.Poisoned/', 12);
-        this.sleepFrames = this.loadFrames('/assets/sharkie/2.Long_IDLE/', 13);
+        this.swimFrames = this.loadFrames('./assets/sharkie/swim/', 6);
+        this.shootFrames = this.loadFrames('./assets/sharkie/4.Attack/Bubble trap/Op2 (Without Bubbles)/', 7);
+        this.hitFrames = this.loadFrames('./assets/sharkie/4.Attack/Fin slap/', 6);
+        this.jellyFishCollisionFrames = this.loadFrames('./assets/sharkie/5.Hurt/2.Electric shock/', 3);
+        this.pufferFishCollisionFrames = this.loadFrames('./assets/sharkie/5.Hurt/1.Poisoned/', 4);
+        this.deathByJellyFishFrames = this.loadFrames('./assets/sharkie/6.dead/2.Electro_shock/', 10);
+        this.deathByPufferFishFrames = this.loadFrames('./assets/sharkie/6.dead/1.Poisoned/', 12);
+        this.sleepFrames = this.loadFrames('./assets/sharkie/2.Long_IDLE/', 13);
         this.currentFrames = this.swimFrames;
         this.currentFrame = 0;
-        this.frameSpeed = 10 / GAME_SPEED;
-        this.shootFrameSpeed = 5 / GAME_SPEED;
+        this.frameSpeed = 0.05 / GAME_SPEED;
+        this.shootFrameSpeed = 0.03 / GAME_SPEED;
+        this.deathFrameSpeed = 0.05 / GAME_SPEED;
         this.tickCount = 0;
         this.hitbox = { x: this.x, y: this.y, width: this.width, height: this.height };
         this.isSpecialActive = false;
@@ -58,6 +60,7 @@ export default class Player {
         if (event.key === 'd' && this.potions > 0) {
             this.potions--;
             this.isBuffed = true;
+            playSound('powerUp');
             this.updateUI();
 
             setTimeout(() => {
@@ -137,17 +140,24 @@ export default class Player {
 
     startCollisionAnimation(collisionType) {
         if (!this.isInCollision) {
-            this.isInCollision = true; // Blockiert weitere Animationen
-            this.collisionAnimationTimer = 240 / GAME_SPEED;
+            this.isInCollision = true;
+            this.collisionAnimationTimer = 1500 / GAME_SPEED;
 
             if (collisionType === 'deathByJellyFish') {
                 this.currentFrames = this.deathByJellyFishFrames;
+                playSound('die');
             } else if (collisionType === 'deathByPufferFish') {
                 this.currentFrames = this.deathByPufferFishFrames;
+                playSound('die');
             } else {
-                this.currentFrames = collisionType === 'JellyFish'
-                    ? this.jellyFishCollisionFrames
-                    : this.pufferFishCollisionFrames;
+                if (collisionType === 'JellyFish') {
+                    this.currentFrames = this.jellyFishCollisionFrames;
+                    playSound('hurtJellyFish');
+                }
+                else {
+                    this.currentFrames = this.pufferFishCollisionFrames;
+                    playSound('hurtPufferFish');
+                }
             }
 
             this.currentFrame = 0;
@@ -157,14 +167,15 @@ export default class Player {
         }
     }
 
-    update() {
+    update(deltaTime) {
         if (this.isDead) {
-            this.tickCount++;
-            if (this.tickCount >= this.frameSpeed) {
+            this.tickCount += deltaTime;
+            if (this.tickCount >= this.deathFrameSpeed) {
                 this.tickCount = 0;
                 this.currentFrame = Math.min(this.currentFrame + 1, this.currentFrames.length - 1);
 
-                if (this.currentFrame === this.currentFrames.length - 1) {
+                if (this.currentFrame === this.currentFrames.length - 1 && this.game.endScreenVisible === false) {
+                    this.game.endScreenVisible = true;
                     setTimeout(() => {
                         this.game.showEndScreen('lose');
                     }, 2000);
@@ -174,28 +185,29 @@ export default class Player {
         }
 
         if (this.game.boss && this.game.boss.health <= 0) {
-            this.tickCount++;
+            this.tickCount += deltaTime;
             this.switchAnimation('sleep');
             if (this.tickCount >= this.frameSpeed) {
                 this.tickCount = 0;
                 this.currentFrame = Math.min(this.currentFrame + 1, this.currentFrames.length - 1);
 
-                if (this.currentFrame === this.currentFrames.length - 1) {
+                if (this.currentFrame === this.currentFrames.length - 1 && this.game.endScreenVisible === false) {
+                    this.game.endScreenVisible = true;
                     setTimeout(() => {
                         this.game.showEndScreen('win');
                     }, 3000);
                 }
             }
             return;
-        };
+        }
 
 
-        if (this.up) this.y -= this.speed;
-        if (this.down) this.y += this.speed;
+        if (this.up) this.y -= this.speed * deltaTime;
+        if (this.down) this.y += this.speed * deltaTime;
         this.y = Math.max(-115, Math.min(canvas.height - (this.height - 60), this.y));
 
         if (this.isInCollision) {
-            this.collisionAnimationTimer--;
+            this.collisionAnimationTimer -= deltaTime * 1000;
             if (this.collisionAnimationTimer <= 0) {
                 if (this.health > 0) {
                     this.isInCollision = false;
@@ -210,19 +222,20 @@ export default class Player {
             this.switchAnimation('shoot');
         }
 
-        this.tickCount++;
+        this.tickCount += deltaTime;
         const currentFrameSpeed = this.currentFrames === this.shootFrames ? this.shootFrameSpeed : this.frameSpeed;
         if (this.tickCount >= currentFrameSpeed) {
             this.tickCount = 0;
             this.currentFrame = (this.currentFrame + 1) % this.currentFrames.length;
 
             if (this.currentFrames === this.shootFrames && this.currentFrame === this.shootFrames.length - 1 && this.isSpecialShooting) {
-                this.specialBullet = new Bullet(this.x + this.width, this.y + this.height / 2 - 15, this.isSpecialShooting, this.isBuffed); // Setze den Schaden auf 2
+                this.specialBullet = new Bullet(this.x + this.width, this.y + this.height / 2 - 15, this.isSpecialShooting, this.isBuffed); // Set DMG to 2
                 this.specialBullet.width *= 2;
                 this.specialBullet.height *= 2;
                 this.specialBullet.speed = 0;
                 this.game.bullets.push(this.specialBullet);
                 this.switchAnimation('special');
+                playSound('specialBullet');
                 this.isSpecialShooting = false;
             }
 
@@ -237,6 +250,7 @@ export default class Player {
 
             if (this.currentFrames === this.shootFrames && this.currentFrame === this.shootFrames.length - 1 && !this.isSpecialActive) {
                 if (this.isShooting) {
+                    playSound('shooting')
                     this.game.bullets.push(new Bullet(this.x + this.width - 60, this.y + this.height - 110, this.isSpecialShooting, this.isBuffed));
                 } else {
                     this.switchAnimation('swim');
@@ -280,8 +294,8 @@ export default class Player {
         if (currentFrame.isLoaded && !currentFrame.broken) {
             ctx.drawImage(currentFrame, this.x, this.y, this.width, this.height);
         }
-        ctx.strokeStyle = 'red';
-        ctx.strokeRect(this.hitbox.x, this.hitbox.y, this.hitbox.width, this.hitbox.height);
+        // ctx.strokeStyle = 'red';
+        // ctx.strokeRect(this.hitbox.x, this.hitbox.y, this.hitbox.width, this.hitbox.height);
     }
 
     isCollidingWith(other) {

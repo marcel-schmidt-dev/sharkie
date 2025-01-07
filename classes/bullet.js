@@ -8,10 +8,10 @@ class Bullet {
         this.damage = special ? (buffed ? 4 : 3) : (buffed ? 2 : 1);
         this.image = new Image();
         if (buffed) {
-            this.image.src = '/assets/sharkie/4.Attack/Bubble trap/Buffed.png';
+            this.image.src = './assets/sharkie/4.Attack/Bubble trap/Buffed.png';
         }
         else {
-            this.image.src = '/assets/sharkie/4.Attack/Bubble trap/Bubble.png';
+            this.image.src = './assets/sharkie/4.Attack/Bubble trap/Bubble.png';
         }
         this.hitbox = { x: this.x, y: this.y, width: this.width, height: this.height };
         this.isCollided = false;
@@ -24,8 +24,8 @@ class Bullet {
 
     draw(ctx) {
         ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
-        ctx.strokeStyle = 'red';
-        ctx.strokeRect(this.hitbox.x, this.hitbox.y, this.hitbox.width, this.hitbox.height);
+        // ctx.strokeStyle = 'red';
+        // ctx.strokeRect(this.hitbox.x, this.hitbox.y, this.hitbox.width, this.hitbox.height);
     }
 
     isInBounds() {

@@ -8,16 +8,16 @@ export default class Poison {
         this.height = 80;
         this.frameIndex = 0;
         this.tickCount = 0;
-        this.ticksPerFrame = 20;
+        this.ticksPerFrame = 10;
         this.frames = [
-            '/assets/marks/poison/1.png',
-            '/assets/marks/poison/2.png',
-            '/assets/marks/poison/3.png',
-            '/assets/marks/poison/4.png',
-            '/assets/marks/poison/5.png',
-            '/assets/marks/poison/6.png',
-            '/assets/marks/poison/7.png',
-            '/assets/marks/poison/8.png',
+            './assets/marks/poison/1.png',
+            './assets/marks/poison/2.png',
+            './assets/marks/poison/3.png',
+            './assets/marks/poison/4.png',
+            './assets/marks/poison/5.png',
+            './assets/marks/poison/6.png',
+            './assets/marks/poison/7.png',
+            './assets/marks/poison/8.png',
         ].map(src => {
             const img = loadImage(src);
             img.onload = () => {
@@ -31,10 +31,11 @@ export default class Poison {
         this.hitbox = { x: this.x, y: this.y, width: this.width, height: this.height };
     }
 
-    update() {
-        this.x -= GAME_SPEED * 2;
-        this.tickCount++;
-        if (this.tickCount > this.ticksPerFrame) {
+    update(deltaTime) {
+        this.x -= GAME_SPEED * 500 * deltaTime;
+
+        this.tickCount += deltaTime;
+        if (this.tickCount > this.ticksPerFrame * deltaTime) {
             this.tickCount = 0;
             this.frameIndex = (this.frameIndex + 1) % this.frames.length;
         }

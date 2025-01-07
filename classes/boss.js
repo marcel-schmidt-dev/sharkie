@@ -1,11 +1,12 @@
 import { GAME_SPEED } from '../main';
 import Enemy from './enemy';
+import playSound from '../utils/sound';
 
 const animations = {
-    transition: [...Array(10).keys()].map(i => `/assets/enemy/boss/introduce/${i + 1}.png`),
-    swim: [...Array(13).keys()].map(i => `/assets/enemy/boss/floating/${i + 1}.png`),
-    die: [...Array(6).keys()].map(i => `/assets/enemy/boss/dead/${i + 1}.png`),
-    attack: [...Array(6).keys()].map(i => `/assets/enemy/boss/attack/${i + 1}.png`)
+    transition: [...Array(10).keys()].map(i => `./assets/enemy/boss/introduce/${i + 1}.png`),
+    swim: [...Array(13).keys()].map(i => `./assets/enemy/boss/floating/${i + 1}.png`),
+    die: [...Array(6).keys()].map(i => `./assets/enemy/boss/dead/${i + 1}.png`),
+    attack: [...Array(6).keys()].map(i => `./assets/enemy/boss/attack/${i + 1}.png`)
 };
 
 export default class Boss extends Enemy {
@@ -14,7 +15,7 @@ export default class Boss extends Enemy {
         this.game = game;
         this.width = 500;
         this.height = 500;
-        this.speed = 1 * GAME_SPEED;
+        this.speed = 200 * GAME_SPEED;
         this.health = 100;
         this.x = canvas.width - this.width;
         this.y = 0;
@@ -28,11 +29,10 @@ export default class Boss extends Enemy {
         this.targetPosition = null;
         this.lastUpdateTime = Date.now();
         this.hitbox = this.createHitbox();
-
         this.currentAnimation = 'transition';
         this.frameTick = 0;
-        this.frameSpeed = 15 / GAME_SPEED;
-        this.attackFrameSpeed = 5 / GAME_SPEED;
+        this.frameSpeed = 0.1 / GAME_SPEED;
+        this.attackFrameSpeed = 0.1 / GAME_SPEED;
     }
 
     createHitbox() {
@@ -48,18 +48,16 @@ export default class Boss extends Enemy {
         return Math.floor(Math.random() * 5000) + 5000;
     }
 
-    update() {
-        console.log(this.health);
-
+    update(deltaTime) {
         this.handleHealthBar();
         if (this.isDying) {
-            this.handleDying();
+            this.handleDying(deltaTime);
         } else if (this.isReturning) {
-            this.returnToOriginalPosition();
+            this.returnToOriginalPosition(deltaTime);
         } else if (this.isAttacking) {
-            this.performAttack();
+            this.performAttack(deltaTime);
         } else {
-            this.handleIdle();
+            this.handleIdle(deltaTime);
         }
         this.updateHitbox();
     }
@@ -68,32 +66,30 @@ export default class Boss extends Enemy {
         this.hitbox = this.createHitbox();
     }
 
-    handleDying() {
-        this.y -= this.speed / 2;
-        this.x -= this.speed * 2;
-        this.advanceAnimation();
+    handleDying(deltaTime) {
+        this.y -= (this.speed / 2) * deltaTime;
+        this.x -= (this.speed * 2) * deltaTime;
+        this.advanceAnimation(deltaTime);
     }
 
-    handleIdle() {
-        const elapsedTime = Date.now() - this.lastUpdateTime;
-        this.attackCooldown -= elapsedTime;
-        this.lastUpdateTime = Date.now();
+    handleIdle(deltaTime) {
+        this.attackCooldown -= deltaTime * 1000;
 
         if (this.attackCooldown <= 0) {
             this.startAttack();
         } else {
-            this.patrol();
+            this.patrol(deltaTime);
         }
     }
 
-    patrol() {
-        this.y += this.movingDown ? this.speed : -this.speed;
+    patrol(deltaTime) {
+        this.y += this.movingDown ? this.speed * deltaTime : -this.speed * deltaTime;
         if (this.movingDown && this.hitbox.y + this.hitbox.height >= canvas.height) {
             this.movingDown = false;
         } else if (!this.movingDown && this.hitbox.y <= 0) {
             this.movingDown = true;
         }
-        this.updateAnimation();
+        this.updateAnimation(deltaTime);
     }
 
     startAttack() {
@@ -103,6 +99,7 @@ export default class Boss extends Enemy {
         this.switchToAnimation('attack');
         this.currentFrameIndex = 0;
         this.announceStartTime = null;
+        playSound('bossAttack');
     }
 
     setPlayerPosition() {
@@ -120,21 +117,21 @@ export default class Boss extends Enemy {
 
 
 
-    performAttack() {
+    performAttack(deltaTime) {
         if (this.attackPhase === 'announce') {
-            this.handleAnnouncePhase();
+            this.handleAnnouncePhase(deltaTime);
         } else if (this.attackPhase === 'attack') {
-            this.moveToTarget();
+            this.moveToTarget(deltaTime);
         } else if (this.attackPhase === 'retreat') {
-            if (this.advancePhase(this.frames.length - 1)) {
+            if (this.advancePhase(this.frames.length - 1, deltaTime)) {
                 this.endAttack();
             }
         }
     }
 
-    handleAnnouncePhase() {
+    handleAnnouncePhase(deltaTime) {
         if (!this.announceStartTime) {
-            this.updateAnimation();
+            this.updateAnimation(deltaTime);
             if (this.currentFrameIndex >= 1) {
                 this.announceStartTime = Date.now();
             }
@@ -146,8 +143,8 @@ export default class Boss extends Enemy {
         }
     }
 
-    moveToTarget() {
-        const attackSpeed = this.speed * 4;
+    moveToTarget(deltaTime) {
+        const attackSpeed = this.speed * 4 * deltaTime;
         const directionX = this.targetPosition.x - this.x;
         const directionY = this.targetPosition.y - this.y;
         const distance = Math.sqrt(directionX ** 2 + directionY ** 2);
@@ -156,9 +153,10 @@ export default class Boss extends Enemy {
             this.x = this.targetPosition.x;
             this.y = this.targetPosition.y;
             this.attackPhase = 'retreat';
+        } else {
+            this.x += (directionX / distance) * attackSpeed;
+            this.y += (directionY / distance) * attackSpeed;
         }
-        this.x += (directionX / distance) * attackSpeed;
-        this.y += (directionY / distance) * attackSpeed;
     }
 
 
@@ -169,12 +167,12 @@ export default class Boss extends Enemy {
         this.lastUpdateTime = Date.now();
     }
 
-    returnToOriginalPosition() {
+    returnToOriginalPosition(deltaTime) {
+        const speed = this.speed * 2 * deltaTime;
         const dx = this.originalPosition.x - this.x;
         const dy = this.originalPosition.y - this.y;
 
         const distance = Math.sqrt(dx ** 2 + dy ** 2);
-        const speed = this.speed * 2;
 
         if (distance > speed) {
             this.x += (dx / distance) * speed;
@@ -185,10 +183,8 @@ export default class Boss extends Enemy {
             this.isReturning = false;
             this.attackCooldown = this.getRandomCooldown();
         }
-        this.updateAnimation();
+        this.updateAnimation(deltaTime);
     }
-
-
 
     switchToAnimation(animation) {
         if (this.currentAnimation !== animation) {
@@ -199,10 +195,10 @@ export default class Boss extends Enemy {
         }
     }
 
-    updateAnimation() {
+    updateAnimation(deltaTime) {
         if (!this.isLoaded) return;
 
-        this.frameTick++;
+        this.frameTick += deltaTime;
         const speed = this.currentAnimation === 'attack' ? this.attackFrameSpeed : this.frameSpeed;
 
         if (this.frameTick >= speed) {
@@ -220,25 +216,18 @@ export default class Boss extends Enemy {
         }
     }
 
-    advancePhase(frameLimit) {
-        this.advanceAnimation();
-        return this.currentFrameIndex >= frameLimit;
+    advancePhase(deltaTime) {
+        this.advanceAnimation(deltaTime);
+        return this.currentFrameIndex >= deltaTime;
     }
 
-    advanceAnimation() {
-        this.frameTick++;
+    advanceAnimation(deltaTime) {
+        this.frameTick += deltaTime;
         const speed = this.currentAnimation === 'attack' ? this.attackFrameSpeed : this.frameSpeed;
 
         if (this.frameTick >= speed) {
             this.frameTick = 0;
             this.currentFrameIndex = Math.min(this.currentFrameIndex + 1, this.frames.length - 1);
-        }
-    }
-
-    onCollisionWithBullet() {
-        this.health--;
-        if (this.health <= 0) {
-            this.die();
         }
     }
 
