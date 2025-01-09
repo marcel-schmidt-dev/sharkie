@@ -22,7 +22,7 @@ export default function playSound(sound = "") {
             volume = 0.2;
             break;
         case "powerUp":
-            src = "./assets/sounds/power-up.mp33";
+            src = "./assets/sounds/power-up.mp3";
             volume = 0.5;
             break;
         case "specialBullet":
@@ -30,16 +30,24 @@ export default function playSound(sound = "") {
             volume = 0.2;
             break;
         case "mobDie":
-            src = "./assets/sounds/edit/mob-die.mp3";
+            src = "./assets/sounds/mob-die.mp3";
             volume = 0.2;
             break;
         case "bossDie":
-            src = "./assets/sounds/edit/boss-die.mp3";
+            src = "./assets/sounds/boss-die.mp3";
             volume = 1;
             break;
         case "bossAttack":
-            src = "./assets/sounds/edit/boss-attack.mp3";
+            src = "./assets/sounds/boss-attack.mp3";
             volume = 0.4;
+            break;
+        case "coin":
+            src = "./assets/sounds/coin.mp3";
+            volume = 0.5;
+            break;
+        case "poison":
+            src = "./assets/sounds/edit/flask.mp3";
+            volume = 0.5;
         default:
             break;
     }

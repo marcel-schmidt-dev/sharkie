@@ -5,6 +5,7 @@ import Player from './Player';
 import BackgroundLayer from './BackgroundLayer';
 import Boss from './Boss';
 import { backgroundAudio } from '../main.js';
+import playSound from '../utils/sound.js';
 
 export default class Game {
     constructor(ctx) {
@@ -117,6 +118,7 @@ export default class Game {
             coin.update(deltaTime);
             coin.draw(this.ctx);
             if (coin.isCollidingWith(this.player)) {
+                playSound('coin');
                 this.coins.splice(this.coins.indexOf(coin), 1);
                 this.player.coins++;
                 this.player.updateUI();
@@ -129,6 +131,7 @@ export default class Game {
             poison.update(deltaTime);
             poison.draw(this.ctx);
             if (poison.isCollidingWith(this.player)) {
+                playSound('poison');
                 this.poisons.splice(this.poisons.indexOf(poison), 1);
                 this.player.potions++;
                 this.player.updateUI();
