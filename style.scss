@@ -81,6 +81,7 @@ body {
   align-items: center;
   justify-content: center;
   flex-direction: column;
+  overflow: hidden;
 
   .game {
     position: relative;
@@ -105,16 +106,23 @@ body {
 
       .left {
         display: flex;
-        gap: 20px;
+        gap: 40px;
+        width: 100%;
+
+        @media (max-width: 768px) {
+          gap: 20px;
+        }
+
         div {
           display: flex;
           justify-content: flex-start;
           align-items: center;
-          gap: 20px;
+          gap: 10px;
 
           span {
             font-size: 1.5rem;
             color: #fff;
+            display: block;
           }
         }
       }
@@ -134,8 +142,16 @@ body {
       }
 
       img {
-        width: 50px;
-        height: 50px;
+        max-width: 50px;
+        max-height: 50px;
+        object-fit: contain;
+        display: block;
+        width: 100%;
+
+        @media (max-width: 768px) {
+          max-width: 30px;
+          max-height: 30px;
+        }
       }
     }
 
@@ -232,7 +248,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40%;
+  width: 30%;
   bottom: 20px;
   z-index: 50;
   left: 50%;
@@ -241,6 +257,7 @@ body {
   img {
     width: auto;
     height: 50px;
+    transform: translateY(-20%);
   }
   .boss-bar {
     width: 100%;

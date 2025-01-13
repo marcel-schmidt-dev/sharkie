@@ -32,9 +32,9 @@ export default class PufferFish extends Enemy {
         this.game = game;
         this.fishType = 'pufferFish';
         this.color = randomColor;
-        this.width = this.canvas.width / 14;
-        this.height = this.canvas.width / 14;
-        this.speed = 500 * GAME_SPEED;
+        this.width = this.canvas.width * 0.07;
+        this.height = this.canvas.width * 0.07;
+        this.speed = this.canvas.width * 0.4 * GAME_SPEED;
         this.health = 2;
         this.currentAnimation = 'transition';
         this.frameTick = 0;

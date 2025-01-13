@@ -50,7 +50,7 @@ export default class Enemy {
         }
 
         // Draw hitbox for debugging
-        // this.drawHitbox(ctx);
+        //this.drawHitbox(ctx);
     }
 
     drawHitbox(ctx) {
@@ -101,6 +101,6 @@ export default class Enemy {
     }
 
     isInBounds() {
-        return this.x + this.width > 0 && this.y + this.height > 0;
+        return this.x + this.hitbox.width > 0 && this.y + this.hitbox.height > 0;
     }
 }

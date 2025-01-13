@@ -35,10 +35,10 @@ export default class JellyFish extends Enemy {
         this.game = game;
         this.type = type;
         this.fishType = 'jellyFish';
-        this.width = this.canvas.width / 8;
-        this.height = this.canvas.width / 8;
+        this.width = this.canvas.width * 0.13;
+        this.height = this.canvas.width * 0.13;
         this.health = (type === 'green' || type === 'pink') ? 4 : 3;
-        this.speed = (type === 'green' || type === 'pink') ? 1250 * GAME_SPEED : 900 * GAME_SPEED;
+        this.speed = (type === 'green' || type === 'pink') ? this.canvas.width * GAME_SPEED : this.canvas.width * 0.7 * GAME_SPEED;
         this.frameSpeed = 0.08;
         this.tickCount = 0;
         this.x = canvas.width;

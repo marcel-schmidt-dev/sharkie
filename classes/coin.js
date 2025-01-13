@@ -1,11 +1,11 @@
-import { GAME_SPEED, loadImage } from '../main';
+import { canvas, GAME_SPEED, loadImage } from '../main';
 
 export default class Coin {
     constructor(x, y) {
         this.x = x;
         this.y = y;
-        this.width = 50;
-        this.height = 50;
+        this.width = canvas.width * 0.04;
+        this.height = canvas.width * 0.04;
         this.frameIndex = 0;
         this.tickCount = 0;
         this.ticksPerFrame = 20;

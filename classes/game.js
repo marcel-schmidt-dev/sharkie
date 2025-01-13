@@ -1,4 +1,4 @@
-import { GAME_SPEED } from '../main.js';
+import { canvas, GAME_SPEED } from '../main.js';
 import JellyFish from './JellyFish';
 import PufferFish from './PufferFish';
 import Player from './Player';
@@ -6,6 +6,7 @@ import BackgroundLayer from './BackgroundLayer';
 import Boss from './Boss';
 import { backgroundAudio } from '../main.js';
 import playSound from '../utils/sound.js';
+import { muted } from '../main.js';
 
 export default class Game {
     constructor(ctx) {
@@ -24,25 +25,37 @@ export default class Game {
         this.endScreenVisible = false;
 
         this.backgroundLayers = [
-            new BackgroundLayer('./assets/background/Layers/water/D.png', 100 * GAME_SPEED),
-            new BackgroundLayer('./assets/background/Layers/fondo2/D.png', 200 * GAME_SPEED),
-            new BackgroundLayer('./assets/background/Layers/fondo1/D.png', 300 * GAME_SPEED),
-            new BackgroundLayer('./assets/background/Layers/floor/D.png', 400 * GAME_SPEED)
+            new BackgroundLayer('./assets/background/Layers/water/D.png', canvas.width * 0.2),
+            new BackgroundLayer('./assets/background/Layers/fondo2/D.png', canvas.width * 0.16),
+            new BackgroundLayer('./assets/background/Layers/fondo1/D.png', canvas.width * 0.23),
+            new BackgroundLayer('./assets/background/Layers/floor/D.png', canvas.width * 0.3)
         ];
 
         this.lightImage = new Image();
         this.lightImage.src = './assets/background/Layers/light/COMPLETO.png';
         this.lightImageX = canvas.width;
-        this.lightImageSpeed = 1 * GAME_SPEED;
+        this.lightImageSpeed = canvas.width * 0.001 * GAME_SPEED;
 
         this.startTime = Date.now();
         this.lastUpdateTime = Date.now();
+
+        document.getElementById('touch-up').addEventListener('touchstart', () => this.player.move({ key: 'ArrowUp' }));
+        document.getElementById('touch-up').addEventListener('touchend', () => this.player.stop({ key: 'ArrowUp' }));
+
+        document.getElementById('touch-down').addEventListener('touchstart', () => this.player.move({ key: 'ArrowDown' }));
+        document.getElementById('touch-down').addEventListener('touchend', () => this.player.stop({ key: 'ArrowDown' }));
+
+        document.getElementById('touch-shoot').addEventListener('touchstart', () => this.player.move({ key: ' ' }));
+        document.getElementById('touch-shoot').addEventListener('touchend', () => this.player.stop({ key: ' ' }));
+
+        document.getElementById('touch-special').addEventListener('touchstart', () => this.player.move({ key: 'e' }));
+        document.getElementById('touch-special').addEventListener('touchend', () => this.player.stop({ key: 'e' }));
     }
 
     start() {
         this.isRunning = true;
         requestAnimationFrame(() => this.update());
-        backgroundAudio.play();
+        if (!muted) backgroundAudio.play();
     }
 
     stop() {

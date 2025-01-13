@@ -4,8 +4,8 @@ export default class Poison {
     constructor(x, y) {
         this.x = x;
         this.y = y;
-        this.width = 80;
-        this.height = 80;
+        this.width = canvas.width * 0.06;
+        this.height = canvas.width * 0.06;
         this.frameIndex = 0;
         this.tickCount = 0;
         this.ticksPerFrame = 10;

@@ -1,4 +1,4 @@
-import { GAME_SPEED } from '../main.js';
+import { canvas, GAME_SPEED } from '../main.js';
 import Bullet from './Bullet';
 import playSound from '../utils/sound.js';
 
@@ -204,7 +204,10 @@ export default class Player {
 
         if (this.up) this.y -= this.speed * deltaTime;
         if (this.down) this.y += this.speed * deltaTime;
-        this.y = Math.max(-115, Math.min(canvas.height - (this.height - 60), this.y));
+        this.y = Math.max(
+            0 - (this.hitbox.y - this.y),
+            Math.min(canvas.height - (this.hitbox.y + this.hitbox.height - this.y), this.y)
+        );
 
         if (this.isInCollision) {
             this.collisionAnimationTimer -= deltaTime * 1000;
@@ -251,7 +254,7 @@ export default class Player {
             if (this.currentFrames === this.shootFrames && this.currentFrame === this.shootFrames.length - 1 && !this.isSpecialActive) {
                 if (this.isShooting) {
                     playSound('shooting')
-                    this.game.bullets.push(new Bullet(this.x + this.width - 60, this.y + this.height - 110, this.isSpecialShooting, this.isBuffed));
+                    this.game.bullets.push(new Bullet(this.x + this.width * 0.6, this.y + this.height * 0.55, this.isSpecialShooting, this.isBuffed));
                 } else {
                     this.switchAnimation('swim');
                 }
@@ -271,7 +274,7 @@ export default class Player {
             this.specialBullet.y = this.y + this.height / 2 - 15;
         }
 
-        this.hitbox = { x: this.x + 60, y: this.y + 120, width: this.width - 110, height: this.height - 180 };
+        this.hitbox = { x: this.x + canvas.width * 0.05, y: this.y + canvas.width * 0.1, width: this.width * 0.5, height: this.height * 0.25 };
     }
 
     handleCollisionWithEnemy(enemy) {

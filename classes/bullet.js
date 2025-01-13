@@ -1,10 +1,12 @@
+import { canvas, GAME_SPEED } from "../main";
+
 class Bullet {
     constructor(x, y, special = false, buffed = false) {
         this.x = x;
         this.y = y;
-        this.width = 30;
-        this.height = 30;
-        this.speed = 5;
+        this.width = canvas.width * 0.025;
+        this.height = canvas.width * 0.025;
+        this.speed = canvas.width * 0.003 * GAME_SPEED;
         this.damage = special ? (buffed ? 4 : 3) : (buffed ? 2 : 1);
         this.image = new Image();
         if (buffed) {

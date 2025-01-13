@@ -1,8 +1,9 @@
+import { GAME_SPEED, loadImage } from "../main";
+
 export default class BackgroundLayer {
     constructor(imageSrc, speed) {
-        this.image = new Image();
-        this.image.src = imageSrc;
-        this.speed = speed;
+        this.image = loadImage(imageSrc);
+        this.speed = speed * GAME_SPEED;
         this.x = 0;
         this.y = 0;
         this.width = canvas.width * 2;

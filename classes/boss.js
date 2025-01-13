@@ -13,9 +13,9 @@ export default class Boss extends Enemy {
     constructor(game) {
         super(animations);
         this.game = game;
-        this.width = 500;
-        this.height = 500;
-        this.speed = 200 * GAME_SPEED;
+        this.width = canvas.width * 0.4;
+        this.height = canvas.width * 0.4;
+        this.speed = this.canvas.width * 0.15 * GAME_SPEED;
         this.health = 100;
         this.x = canvas.width - this.width;
         this.y = 0;
@@ -37,10 +37,10 @@ export default class Boss extends Enemy {
 
     createHitbox() {
         return {
-            x: this.x + 25,
-            y: this.y + 225,
-            width: this.width - 50,
-            height: this.height - 300
+            x: this.x + this.width / 12,
+            y: this.y + this.height / 2,
+            width: this.width / 1.2,
+            height: this.height / 3
         };
     }
 
@@ -115,8 +115,6 @@ export default class Boss extends Enemy {
         };
     }
 
-
-
     performAttack(deltaTime) {
         if (this.attackPhase === 'announce') {
             this.handleAnnouncePhase(deltaTime);
@@ -171,7 +169,6 @@ export default class Boss extends Enemy {
         const speed = this.speed * 2 * deltaTime;
         const dx = this.originalPosition.x - this.x;
         const dy = this.originalPosition.y - this.y;
-
         const distance = Math.sqrt(dx ** 2 + dy ** 2);
 
         if (distance > speed) {
