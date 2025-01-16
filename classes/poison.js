@@ -1,4 +1,4 @@
-import { GAME_SPEED, loadImage } from '../main';
+import { GAME_SPEED, imageCache } from '../main';
 
 export default class Poison {
     constructor(x, y) {
@@ -8,7 +8,7 @@ export default class Poison {
         this.height = canvas.width * 0.06;
         this.frameIndex = 0;
         this.tickCount = 0;
-        this.ticksPerFrame = 10;
+        this.ticksPerFrame = 15;
         this.frames = [
             './assets/marks/poison/1.png',
             './assets/marks/poison/2.png',
@@ -18,16 +18,8 @@ export default class Poison {
             './assets/marks/poison/6.png',
             './assets/marks/poison/7.png',
             './assets/marks/poison/8.png',
-        ].map(src => {
-            const img = loadImage(src);
-            img.onload = () => {
-                img.isLoaded = true;
-            };
-            img.onerror = () => {
-                img.broken = true;
-            };
-            return img;
-        });
+        ];
+
         this.hitbox = { x: this.x, y: this.y, width: this.width, height: this.height };
     }
 
@@ -43,10 +35,8 @@ export default class Poison {
     }
 
     draw(ctx) {
-        const currentFrame = this.frames[this.frameIndex];
-        if (currentFrame.isLoaded && !currentFrame.broken) {
-            ctx.drawImage(currentFrame, this.x, this.y, this.width, this.height);
-        }
+        const currentFrame = imageCache[this.frames[this.frameIndex]];
+        ctx.drawImage(currentFrame, this.x, this.y, this.width, this.height);
     }
 
     isInBounds() {

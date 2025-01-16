@@ -1,4 +1,4 @@
-import { canvas, GAME_SPEED, loadImage } from '../main';
+import { canvas, GAME_SPEED, imageCache } from '../main';
 
 export default class Coin {
     constructor(x, y) {
@@ -14,16 +14,7 @@ export default class Coin {
             './assets/marks/1. Coins/2.png',
             './assets/marks/1. Coins/3.png',
             './assets/marks/1. Coins/4.png'
-        ].map(src => {
-            const img = loadImage(src);
-            img.onload = () => {
-                img.isLoaded = true;
-            };
-            img.onerror = () => {
-                img.broken = true;
-            };
-            return img;
-        });
+        ];
         this.hitbox = { x: this.x, y: this.y, width: this.width, height: this.height };
     }
 
@@ -38,10 +29,8 @@ export default class Coin {
     }
 
     draw(ctx) {
-        const currentFrame = this.frames[this.frameIndex];
-        if (currentFrame.isLoaded && !currentFrame.broken) {
-            ctx.drawImage(currentFrame, this.x, this.y, this.width, this.height);
-        }
+        const currentFrame = imageCache[this.frames[this.frameIndex]];
+        ctx.drawImage(currentFrame, this.x, this.y, this.width, this.height);
     }
 
     isInBounds() {

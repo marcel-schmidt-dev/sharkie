@@ -1,4 +1,4 @@
-import { GAME_SPEED, loadImage } from '../main';
+import { GAME_SPEED, imageCache } from '../main';
 import Enemy from './enemy';
 
 const animations = {
@@ -38,7 +38,7 @@ export default class PufferFish extends Enemy {
         this.health = 2;
         this.currentAnimation = 'transition';
         this.frameTick = 0;
-        this.frameSpeed = 10;
+        this.frameSpeed = 20;
         this.x = canvas.width;
         this.y = Math.random() * (canvas.height - this.height);
         this.hitbox;
@@ -57,39 +57,22 @@ export default class PufferFish extends Enemy {
             }
         } else {
             this.x -= this.speed * deltaTime;
+            this.frameTick++;
+            if (this.frameTick >= this.frameSpeed) {
+                this.frameTick = 0;
+                this.currentFrameIndex = (this.currentFrameIndex + 1) % this.frames.length;
 
-            if (this.isLoaded) {
-                this.frameTick++;
-                if (this.frameTick >= this.frameSpeed) {
-                    this.frameTick = 0;
-                    this.currentFrameIndex = (this.currentFrameIndex + 1) % this.frames.length;
-
-                    if (this.currentAnimation === 'transition' && this.currentFrameIndex === 0) {
-                        this.frames = animations[this.color].bubbleswim.map(src => {
-                            const img = loadImage(src);
-                            img.onload = () => {
-                                this.isLoaded = true;
-                            };
-                            img.onerror = () => {
-                                img.broken = true;
-                            };
-                            return img;
-                        });
-                        this.currentAnimation = 'bubbleswim';
-                    }
+                if (this.currentAnimation === 'transition' && this.currentFrameIndex === 0) {
+                    this.frames = animations[this.color].bubbleswim.map(src => {
+                        return imageCache[src];
+                    });
+                    this.currentAnimation = 'bubbleswim';
                 }
             }
+
         }
 
-        if (this.isDying) {
-            this.hitbox = { x: 0, y: 0, width: 0, height: 0 };
-        } else {
-            this.hitbox = { x: this.x, y: this.y, width: this.width, height: this.height };
-        }
-    }
-
-    draw(ctx) {
-        super.draw(ctx);
+        this.hitbox = { x: this.x, y: this.y, width: this.width, height: this.height };
     }
 
     onCollisionWithBullet() {

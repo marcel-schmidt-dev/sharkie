@@ -1,4 +1,4 @@
-import { canvas, GAME_SPEED } from '../main.js';
+import { canvas, GAME_SPEED, imageCache } from '../main.js';
 import Bullet from './Bullet';
 import playSound from '../utils/sound.js';
 
@@ -39,6 +39,7 @@ export default class Player {
         this.health = 3;
         this.coins = 0;
         this.isBuffed = false;
+        this.isRepeatingSleepFrames = false;
         document.addEventListener("keydown", this.move.bind(this));
         document.addEventListener("keyup", this.stop.bind(this));
         document.addEventListener("keypress", this.HandleBuff.bind(this));
@@ -47,12 +48,7 @@ export default class Player {
 
     loadFrames(basePath, frameCount) {
         return Array.from({ length: frameCount }, (_, index) => {
-            const img = new Image();
-            img.src = `${basePath}${index + 1}.png`;
-            img.onload = () => {
-                img.isLoaded = true;
-            };
-            return img;
+            return imageCache[`${basePath}${index + 1}.png`];
         });
     }
 
@@ -129,6 +125,8 @@ export default class Player {
             frames = this.hitFrames;
         } else if (animationType === 'sleep') {
             frames = this.sleepFrames;
+            this.frameSpeed = 0.1;
+            this.isRepeatingSleepFrames = false;
         }
 
         if (this.currentFrames !== frames) {
@@ -186,10 +184,22 @@ export default class Player {
 
         if (this.game.boss && this.game.boss.health <= 0) {
             this.tickCount += deltaTime;
-            this.switchAnimation('sleep');
+            if (!this.isRepeatingSleepFrames) {
+                this.switchAnimation('sleep');
+            }
+
             if (this.tickCount >= this.frameSpeed) {
                 this.tickCount = 0;
-                this.currentFrame = Math.min(this.currentFrame + 1, this.currentFrames.length - 1);
+                this.currentFrame++;
+
+                if (this.isRepeatingSleepFrames) {
+                    if (this.currentFrame === this.sleepFrames.length) {
+                        this.currentFrame = this.sleepFrames.length - 3;
+                    }
+                } else if (this.currentFrame === this.sleepFrames.length - 1) {
+                    this.isRepeatingSleepFrames = true;
+                    this.currentFrame = this.sleepFrames.length - 3;
+                }
 
                 if (this.currentFrame === this.currentFrames.length - 1 && this.game.endScreenVisible === false) {
                     this.game.endScreenVisible = true;
@@ -200,7 +210,6 @@ export default class Player {
             }
             return;
         }
-
 
         if (this.up) this.y -= this.speed * deltaTime;
         if (this.down) this.y += this.speed * deltaTime;
@@ -232,7 +241,7 @@ export default class Player {
             this.currentFrame = (this.currentFrame + 1) % this.currentFrames.length;
 
             if (this.currentFrames === this.shootFrames && this.currentFrame === this.shootFrames.length - 1 && this.isSpecialShooting) {
-                this.specialBullet = new Bullet(this.x + this.width, this.y + this.height / 2 - 15, this.isSpecialShooting, this.isBuffed); // Set DMG to 2
+                this.specialBullet = new Bullet(this.x + this.width, this.y + this.height / 2 - 15, this.isSpecialShooting, this.isBuffed);
                 this.specialBullet.width *= 2;
                 this.specialBullet.height *= 2;
                 this.specialBullet.speed = 0;
@@ -254,7 +263,7 @@ export default class Player {
             if (this.currentFrames === this.shootFrames && this.currentFrame === this.shootFrames.length - 1 && !this.isSpecialActive) {
                 if (this.isShooting) {
                     playSound('shooting')
-                    this.game.bullets.push(new Bullet(this.x + this.width * 0.6, this.y + this.height * 0.55, this.isSpecialShooting, this.isBuffed));
+                    this.game.bullets.push(new Bullet(this.x + this.width * 0.8, this.y + this.height * 0.55, this.isSpecialShooting, this.isBuffed));
                 } else {
                     this.switchAnimation('swim');
                 }
@@ -294,11 +303,7 @@ export default class Player {
 
     draw(ctx) {
         const currentFrame = this.currentFrames[this.currentFrame];
-        if (currentFrame.isLoaded && !currentFrame.broken) {
-            ctx.drawImage(currentFrame, this.x, this.y, this.width, this.height);
-        }
-        // ctx.strokeStyle = 'red';
-        // ctx.strokeRect(this.hitbox.x, this.hitbox.y, this.hitbox.width, this.hitbox.height);
+        ctx.drawImage(currentFrame, this.x, this.y, this.width, this.height);
     }
 
     isCollidingWith(other) {

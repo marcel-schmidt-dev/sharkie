@@ -57,6 +57,13 @@ body {
       gap: 20px;
       width: 100%;
 
+      .grp {
+        flex: 1;
+        display: flex;
+        justify-content: start;
+        gap: 10px;
+      }
+
       &:not(:last-child) {
         margin-bottom: 10px;
       }
@@ -64,6 +71,7 @@ body {
       img {
         width: auto;
         max-height: 40px;
+        height: 100%;
       }
 
       div {
@@ -89,6 +97,7 @@ body {
     max-width: 1280px;
     max-height: 720px;
     aspect-ratio: 16 / 9;
+    overflow: hidden;
 
     #canvas {
       background-color: #000;
@@ -170,21 +179,26 @@ body {
       display: block;
     }
 
-    #start {
+    .start-screen-buttons {
       position: absolute;
-      background-color: transparent;
-      border: none;
-      left: 68%;
+      left: 70%;
       width: 40%;
       z-index: 1000;
-      top: 80%;
-      transform: translate(-50%, -50%);
-      cursor: pointer;
-      display: block;
-      max-width: 400px;
+      top: 75%;
+      transform: translate(-50%, 0%);
+      display: flex;
+      gap: 20px;
 
-      img {
+      button {
+        background-color: transparent;
+        border: none;
         width: 100%;
+        cursor: pointer;
+        display: block;
+
+        img {
+          width: 100%;
+        }
       }
     }
 
@@ -200,8 +214,57 @@ body {
       cursor: pointer;
       display: none;
 
+      @media (max-width: 1000px) {
+        top: 40%;
+      }
+
       img {
         width: 100%;
+      }
+    }
+  }
+
+  .imprint-container {
+    position: absolute;
+    top: 0;
+    left: 100%;
+    width: calc(100% - 100px);
+    height: calc(100% - 100px);
+    z-index: 1000;
+    background-color: rgba(#000000, 0.8);
+    color: #fff;
+    padding: 50px;
+    overflow: hidden;
+    transition: all 0.3s ease-in-out;
+
+    &.active {
+      left: 0;
+    }
+
+    .imprint {
+      overflow: auto;
+      height: 100%;
+      padding-right: 50px;
+      font-family: Arial, Helvetica, sans-serif;
+
+      a {
+        color: #fff;
+      }
+    }
+
+    .close {
+      position: absolute;
+      top: 60px;
+      right: 75px;
+      cursor: pointer;
+      width: 50px;
+      height: 50px;
+      font-size: 32px;
+      transition: all 0.3s ease-in-out;
+
+      &:hover {
+        color: #7fffe0;
+        transform: scale(0.9);
       }
     }
   }
@@ -286,4 +349,19 @@ body {
   z-index: 500;
   width: 100%;
   text-align: center;
+}
+
+#loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  font-size: 2em;
+  z-index: 1000;
 }

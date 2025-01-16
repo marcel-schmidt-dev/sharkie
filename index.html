@@ -2,8 +2,8 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/assets/favicon.png" />
     <title>Sharkie</title>
   </head>
   <body>
@@ -26,7 +26,14 @@
         <span id="highscore"></span>
         <button id="retry"><img src="/assets/buttons/Try again/Recurso 17.png" /></button>
         <img id="start-screen" src="/assets/background/title.png" />
-        <button id="start"><img src="/assets/buttons/Start/2.png" /></button>
+        <div class="start-screen-buttons">
+          <button id="start"><img src="/assets/buttons/start.svg" /></button>
+          <button id="imprint"><img src="/assets/buttons/imprint.svg" /></button>
+        </div>
+
+        <div id="loading-screen">
+          <p>Loading...</p>
+        </div>
         <div id="touch-controls">
           <div class="left">
             <button id="touch-up" class="touch-up">
@@ -54,16 +61,99 @@
             <div id="boss-bar"></div>
           </div>
         </div>
+        <div class="imprint-container">
+          <div class="imprint">
+            <div class="close">X</div>
+            <h1>Imprint</h1>
+            <p>Information pursuant to § 5 DDG</p>
+            <p>
+              Marcel Schmidt <br />
+              Robert-Sommer-Straße 32<br />
+              35392 Gießen / Germany<br />
+            </p>
+            <p>
+              <strong>Represented by: </strong><br />
+              Marcel Schmidt<br />
+            </p>
+            <p>
+              <strong>Contact:</strong> <br />
+              Email:
+              <a href="mailto:contact@marcel-schmidt.dev">contact&#64;marcel-schmidt.dev</a><br />
+            </p>
+            <p>
+              <strong>Disclaimer:</strong><br /><br /><strong>Liability for Content</strong
+              ><br /><br />
+              The contents of our pages were created with the utmost care. However, we cannot
+              guarantee the accuracy, completeness, or up-to-dateness of the content. As a service
+              provider, we are responsible for our own content on these pages in accordance with § 7
+              paragraph 1 DDG under general laws. According to §§ 8 to 10 DDG, however, we are not
+              obligated as a service provider to monitor transmitted or stored third-party
+              information or to investigate circumstances that indicate illegal activity.
+              Obligations to remove or block the use of information under general laws remain
+              unaffected. However, liability in this regard is only possible from the time of
+              knowledge of a specific legal violation. Upon becoming aware of such legal violations,
+              we will remove this content immediately.<br /><br />
+              <strong>Liability for Links</strong><br /><br />
+              Our offer contains links to external third-party websites over which we have no
+              control. Therefore, we cannot assume any liability for these external contents. The
+              respective provider or operator of the pages is always responsible for the content of
+              the linked pages. The linked pages were checked for possible legal violations at the
+              time of linking. Illegal content was not recognizable at the time of linking. However,
+              permanent content control of the linked pages is not reasonable without concrete
+              indications of a legal violation. Upon becoming aware of legal violations, we will
+              remove such links immediately.<br /><br />
+              <strong>Copyright</strong><br /><br />
+              The content and works created by the site operators on these pages are subject to
+              German copyright law. Duplication, editing, distribution, and any kind of use beyond
+              the limits of copyright law require the written consent of the respective author or
+              creator. Downloads and copies of this site are permitted for private, non-commercial
+              use only. Insofar as the content on this site was not created by the operator, the
+              copyrights of third parties are respected. In particular, third-party content is
+              marked as such. Should you nevertheless become aware of a copyright infringement,
+              please inform us accordingly. Upon becoming aware of legal violations, we will remove
+              such content immediately.<br /><br />
+              <strong>Data Protection</strong><br /><br />
+              The use of our website is generally possible without providing personal data. If
+              personal data (e.g., name, address, or email addresses) is collected on our pages,
+              this is always done on a voluntary basis, as far as possible. These data will not be
+              passed on to third parties without your explicit consent.<br />
+              We point out that data transmission over the Internet (e.g., communication by email)
+              can have security vulnerabilities. A complete protection of the data from access by
+              third parties is not possible.<br />
+              The use of contact data published within the scope of the imprint obligation by third
+              parties for sending unsolicited advertising and information materials is hereby
+              expressly prohibited. The operators of the pages expressly reserve the right to take
+              legal action in the event of unsolicited advertising information, such as spam
+              emails.<br />
+            </p>
+            <br />
+            Imprint created with the
+            <a target="_blank" href="https://www.impressum-generator.de">Imprint Generator</a>
+            of the
+            <a
+              target="_blank"
+              href="https://www.kanzlei-hasselbach.de/standorte/bonn/"
+              rel="nofollow"
+              >Hasselbach Law Firm, Bonn</a
+            >.
+          </div>
+        </div>
       </div>
       <div class="btn-group">
         <button id="toggle"><img src="/assets/buttons/controls.svg" /></button>
         <div id="controls">
           <div class="btn">
-            <img src="/assets/buttons/w.svg" />
+            <div class="grp">
+              <img src="/assets/buttons/w.svg" />
+              <img src="/assets/buttons/up.svg" />
+            </div>
             <div>UP</div>
           </div>
           <div class="btn">
-            <img src="/assets/buttons/s.svg" />
+            <div class="grp">
+              <img src="/assets/buttons/s.svg" />
+              <img src="/assets/buttons/down.svg" />
+            </div>
             <div>DOWN</div>
           </div>
           <div class="btn">
@@ -72,7 +162,7 @@
           </div>
           <div class="btn">
             <img src="/assets/buttons/d.svg" />
-            <div>Consume Potion</div>
+            <div>ATTACK BUFF</div>
           </div>
           <div class="btn">
             <img src="/assets/buttons/space.svg" />

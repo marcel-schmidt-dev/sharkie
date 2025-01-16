@@ -11,18 +11,22 @@ export const backgroundAudio = new Audio('./assets/sounds/background.mp3');
 backgroundAudio.loop = true;
 backgroundAudio.volume = 0.2;
 
-const imageCache = {};
+export const imageCache = {};
 
 export function loadImage(src) {
     if (imageCache[src]) {
-        return imageCache[src];
+        return Promise.resolve(imageCache[src]);
     }
 
-    const img = new Image();
-    img.src = src;
-    imageCache[src] = img;
-
-    return img;
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.src = src;
+        img.onload = () => {
+            imageCache[src] = img;
+            resolve(img);
+        };
+        img.onerror = reject;
+    });
 }
 
 function preloadImages() {
@@ -151,13 +155,7 @@ function preloadImages() {
         './assets/enemy/jellyFish/dead/Pink/P4.png',
     ];
 
-    const promises = imagePaths.map(src => {
-        return new Promise((resolve, reject) => {
-            const img = loadImage(src);
-            img.onload = () => resolve();
-            img.onerror = () => reject();
-        });
-    });
+    const promises = imagePaths.map(src => loadImage(src));
 
     return Promise.all(promises);
 }
@@ -165,17 +163,20 @@ function preloadImages() {
 let game;
 
 function resetGame() {
+    document.getElementById('loading-screen').style.display = 'flex';
     preloadImages().then(() => {
         game = new Game(ctx);
         document.getElementById('start-screen').style.display = 'none';
         document.getElementById('end-screen').style.display = 'none';
         document.getElementById('retry').style.display = 'none';
         document.getElementById('highscore').style.display = 'none';
-        document.getElementById('start').style.display = 'none';
+        document.querySelector('.start-screen-buttons').style.display = 'none';
         document.getElementById('boss-bar-container').style.display = 'none';
+        document.getElementById('loading-screen').style.display = 'none';
         game.start();
     }).catch(() => {
         console.error('Failed to preload images');
+        document.getElementById('loading-screen').style.display = 'none';
     });
 }
 
@@ -206,6 +207,10 @@ function toggleSound(e) {
     }
 }
 
+function toggleImprint() {
+    document.querySelector('.imprint-container').classList.toggle('active');
+}
+
 handleDeviceChange(touchMediaQuery);
 
 touchMediaQuery.addEventListener('change', handleDeviceChange);
@@ -213,3 +218,5 @@ document.getElementById('retry').addEventListener('click', resetGame);
 document.getElementById('start').addEventListener('click', resetGame);
 document.getElementById('toggle').addEventListener('click', toggleControls);
 document.querySelector('.sound').addEventListener('click', (event) => toggleSound(event));
+document.getElementById('imprint').addEventListener('click', toggleImprint);
+document.querySelector('.imprint-container .close').addEventListener('click', toggleImprint);

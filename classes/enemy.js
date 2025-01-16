@@ -1,21 +1,17 @@
-import { loadImage } from '../main';
 import Coin from './coin';
 import Poison from './poison';
 import playSound from '../utils/sound';
+import { imageCache } from '../main';
 
 export default class Enemy {
     constructor(animations) {
-        if (!animations) {
-            throw new Error('Animations must be provided');
-        }
         this.canvas = document.getElementById('canvas');
         this.animations = animations;
         this.currentAnimation = animations.hasOwnProperty('transition') ? 'transition' : 'swim';
-        this.frames = this.loadImages(this.animations[this.currentAnimation]);
+        this.frames = this.animations[this.currentAnimation].map(src => imageCache[src]);
         this.currentFrameIndex = 0;
         this.frameTick = 0;
-        this.frameSpeed = 20;
-        this.isLoaded = this.frames.length > 0;
+        this.frameSpeed = 0.1;
         this.isDying = false;
         this.health = 2;
         this.x = 0;
@@ -25,24 +21,8 @@ export default class Enemy {
         this.hitbox = { x: 0, y: 0, width: 0, height: 0 };
     }
 
-    loadImages(paths) {
-        if (!paths) {
-            throw new Error('Paths must be provided');
-        }
-        return paths.map(src => {
-            const img = loadImage(src);
-            img.onload = () => {
-                this.isLoaded = true;
-            };
-            img.onerror = () => {
-                img.broken = true;
-            };
-            return img;
-        });
-    }
-
     draw(ctx) {
-        if (this.isLoaded && this.frames.length > 0) {
+        if (this.frames.length > 0) {
             const currentFrame = this.frames[this.currentFrameIndex];
             if (currentFrame instanceof HTMLImageElement && !currentFrame.broken) {
                 ctx.drawImage(currentFrame, this.x, this.y, this.width, this.height);
@@ -50,7 +30,7 @@ export default class Enemy {
         }
 
         // Draw hitbox for debugging
-        //this.drawHitbox(ctx);
+        // this.drawHitbox(ctx);
     }
 
     drawHitbox(ctx) {
@@ -71,33 +51,22 @@ export default class Enemy {
 
     die() {
         this.isDying = true;
-        this.frames = this.animations.die.map(src => {
-            const img = loadImage(src);
-            img.onload = () => {
-                this.isLoaded = true;
-            };
-            img.onerror = () => {
-                img.broken = true;
-            };
-            return img;
-        });
         this.currentAnimation = 'die';
+        this.frames = this.animations[this.currentAnimation].map(src => imageCache[src]);
         this.currentFrameIndex = 0;
-        this.frameTick = 0;
+        this.hitbox = { x: -100, y: -100, width: 0, height: 0 };
+
 
         if (this.fishType === 'pufferFish') {
             const coin = new Coin(this.x, this.y);
             this.game.coins.push(coin);
-            playSound('mobDie');
+
         }
         else if (this.fishType === 'jellyFish') {
             const poison = new Poison(this.x, this.y);
             this.game.poisons.push(poison);
-            playSound('mobDie');
         }
-        else {
-            playSound('bossDie');
-        }
+        playSound('mobDie');
     }
 
     isInBounds() {

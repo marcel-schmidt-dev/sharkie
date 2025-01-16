@@ -1,4 +1,4 @@
-import { GAME_SPEED } from '../main';
+import { GAME_SPEED, imageCache } from '../main';
 import Enemy from './enemy';
 import playSound from '../utils/sound';
 
@@ -186,15 +186,13 @@ export default class Boss extends Enemy {
     switchToAnimation(animation) {
         if (this.currentAnimation !== animation) {
             this.currentAnimation = animation;
-            this.frames = this.loadImages(animations[animation]);
+            this.frames = this.animations[this.currentAnimation].map(src => imageCache[src]);
             this.currentFrameIndex = 0;
             this.frameTick = 0;
         }
     }
 
     updateAnimation(deltaTime) {
-        if (!this.isLoaded) return;
-
         this.frameTick += deltaTime;
         const speed = this.currentAnimation === 'attack' ? this.attackFrameSpeed : this.frameSpeed;
 

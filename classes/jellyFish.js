@@ -58,13 +58,10 @@ export default class JellyFish extends Enemy {
             }
         } else {
             this.x -= this.speed * deltaTime;
-
-            if (this.isLoaded) {
-                this.tickCount += deltaTime;
-                if (this.tickCount >= this.frameSpeed) {
-                    this.tickCount = 0;
-                    this.currentFrameIndex = (this.currentFrameIndex + 1) % this.frames.length;
-                }
+            this.tickCount += deltaTime;
+            if (this.tickCount >= this.frameSpeed) {
+                this.tickCount = 0;
+                this.currentFrameIndex = (this.currentFrameIndex + 1) % this.frames.length;
             }
         }
 
