@@ -1,14 +1,48 @@
 {
   "name": "sharkie",
+  "version": "1.0.0",
   "private": true,
-  "version": "0.0.0",
+  "description": "",
+  "homepage": "https://github.com/marcel-schmidt-dev/sharkie#readme",
+  "bugs": {
+    "url": "https://github.com/marcel-schmidt-dev/sharkie/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marcel-schmidt-dev/sharkie.git"
+  },
+  "license": "MIT",
+  "author": "",
   "type": "module",
+  "main": "main.js",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
   },
+  "dependencies": {
+    "braces": "^3.0.3",
+    "chokidar": "^4.0.1",
+    "detect-libc": "^1.0.3",
+    "esbuild": "^0.21.5",
+    "fill-range": "^7.1.1",
+    "immutable": "^4.3.7",
+    "is-extglob": "^2.1.1",
+    "is-glob": "^4.0.3",
+    "is-number": "^7.0.0",
+    "micromatch": "^4.0.8",
+    "nanoid": "^3.3.7",
+    "node-addon-api": "^7.1.1",
+    "picocolors": "^1.1.1",
+    "picomatch": "^2.3.1",
+    "postcss": "^8.4.47",
+    "readdirp": "^4.0.2",
+    "rollup": "^4.24.4",
+    "source-map-js": "^1.2.1",
+    "to-regex-range": "^5.0.1"
+  },
   "devDependencies": {
+    "jsdoc": "^4.0.4",
     "sass": "^1.80.6",
     "vite": "^5.4.10"
   }
