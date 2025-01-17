@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Class: Bullet</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Class: Bullet</h1>
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2><span class="attribs"><span class="type-signature"></span></span>Bullet<span class="signature">(x, y, special<span class="signature-attributes">opt</span>, buffed<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+    
+
+    
+    <h4 class="name" id="Bullet"><span class="type-signature"></span>new Bullet<span class="signature">(x, y, special<span class="signature-attributes">opt</span>, buffed<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Creates an instance of Bullet.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>x</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">The x-coordinate of the bullet.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>y</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last">The y-coordinate of the bullet.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>special</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last">Indicates if the bullet is special.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>buffed</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last">Indicates if the bullet is buffed.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="bullet.js.html">bullet.js</a>, <a href="bullet.js.html#line14">line 14</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="draw"><span class="type-signature"></span>draw<span class="signature">(ctx)</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Draws the bullet image on the provided canvas context.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>ctx</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">CanvasRenderingContext2D</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The canvas rendering context to draw the bullet on.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="bullet.js.html">bullet.js</a>, <a href="bullet.js.html#line46">line 46</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="isCollidingWith"><span class="type-signature"></span>isCollidingWith<span class="signature">(other)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Checks if the bullet is colliding with another object.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>other</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The other object to check collision with.
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>hitbox</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The hitbox of the other object.
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>x</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The x-coordinate of the other object's hitbox.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>y</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The y-coordinate of the other object's hitbox.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>width</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The width of the other object's hitbox.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>height</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">The height of the other object's hitbox.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="bullet.js.html">bullet.js</a>, <a href="bullet.js.html#line70">line 70</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    - Returns true if the bullet is colliding with the other object, otherwise false.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">boolean</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="isInBounds"><span class="type-signature"></span>isInBounds<span class="signature">()</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Checks if the bullet is within the bounds of the canvas.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="bullet.js.html">bullet.js</a>, <a href="bullet.js.html#line55">line 55</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    True if the bullet is within the canvas bounds, false otherwise.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">boolean</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+
+
+        
+            
+
+    
+
+    
+    <h4 class="name" id="update"><span class="type-signature"></span>update<span class="signature">()</span><span class="type-signature"></span></h4>
+    
+
+    
+
+
+
+<div class="description">
+    Updates the position of the bullet and its hitbox.Increases the x-coordinate by the bullet's speed and updates the hitbox dimensions.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="bullet.js.html">bullet.js</a>, <a href="bullet.js.html#line36">line 36</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Bullet.html">Bullet</a></li><li><a href="module.exports.html">exports</a></li><li><a href="module.exports_module.exports.html">exports</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addTouchEventListener">addTouchEventListener</a></li><li><a href="global.html#advanceAnimation">advanceAnimation</a></li><li><a href="global.html#advancePhase">advancePhase</a></li><li><a href="global.html#checkBossCollisions">checkBossCollisions</a></li><li><a href="global.html#checkBulletCollisions">checkBulletCollisions</a></li><li><a href="global.html#checkCollisions">checkCollisions</a></li><li><a href="global.html#checkEnemyCollisions">checkEnemyCollisions</a></li><li><a href="global.html#createHitbox">createHitbox</a></li><li><a href="global.html#displayLoseScreen">displayLoseScreen</a></li><li><a href="global.html#displayWinScreen">displayWinScreen</a></li><li><a href="global.html#draw">draw</a></li><li><a href="global.html#drawHitbox">drawHitbox</a></li><li><a href="global.html#endAttack">endAttack</a></li><li><a href="global.html#getRandomCooldown">getRandomCooldown</a></li><li><a href="global.html#handleAnimationQueue">handleAnimationQueue</a></li><li><a href="global.html#handleAnnouncePhase">handleAnnouncePhase</a></li><li><a href="global.html#handleBossDefeatAnimation">handleBossDefeatAnimation</a></li><li><a href="global.html#handleCoinCollision">handleCoinCollision</a></li><li><a href="global.html#handleCollision">handleCollision</a></li><li><a href="global.html#handleCollisionWithBullet">handleCollisionWithBullet</a></li><li><a href="global.html#handleCollisionWithEnemy">handleCollisionWithEnemy</a></li><li><a href="global.html#handleDeathAnimation">handleDeathAnimation</a></li><li><a href="global.html#handleDying">handleDying</a></li><li><a href="global.html#handleHealthBar">handleHealthBar</a></li><li><a href="global.html#handleHitFrames">handleHitFrames</a></li><li><a href="global.html#handleIdle">handleIdle</a></li><li><a href="global.html#handleLevelTimeout">handleLevelTimeout</a></li><li><a href="global.html#handleMovement">handleMovement</a></li><li><a href="global.html#handlePoisonCollision">handlePoisonCollision</a></li><li><a href="global.html#handleShooting">handleShooting</a></li><li><a href="global.html#handleShootingFrames">handleShootingFrames</a></li><li><a href="global.html#handleSpecialShooting">handleSpecialShooting</a></li><li><a href="global.html#initializeBackgroundLayers">initializeBackgroundLayers</a></li><li><a href="global.html#initializeLightImage">initializeLightImage</a></li><li><a href="global.html#initializeProperties">initializeProperties</a></li><li><a href="global.html#isCollidingWith">isCollidingWith</a></li><li><a href="global.html#isInBounds">isInBounds</a></li><li><a href="global.html#loadFrames">loadFrames</a></li><li><a href="global.html#move">move</a></li><li><a href="global.html#moveToTarget">moveToTarget</a></li><li><a href="global.html#onCollisionWithBullet">onCollisionWithBullet</a></li><li><a href="global.html#patrol">patrol</a></li><li><a href="global.html#performAttack">performAttack</a></li><li><a href="global.html#removeEventListeners">removeEventListeners</a></li><li><a href="global.html#returnToOriginalPosition">returnToOriginalPosition</a></li><li><a href="global.html#setPlayerPosition">setPlayerPosition</a></li><li><a href="global.html#showEndScreen">showEndScreen</a></li><li><a href="global.html#spawnBoss">spawnBoss</a></li><li><a href="global.html#spawnEnemies">spawnEnemies</a></li><li><a href="global.html#spawnEnemy">spawnEnemy</a></li><li><a href="global.html#start">start</a></li><li><a href="global.html#startAttack">startAttack</a></li><li><a href="global.html#startCollisionAnimation">startCollisionAnimation</a></li><li><a href="global.html#stop">stop</a></li><li><a href="global.html#switchAnimation">switchAnimation</a></li><li><a href="global.html#switchToAnimation">switchToAnimation</a></li><li><a href="global.html#update">update</a></li><li><a href="global.html#updateAnimation">updateAnimation</a></li><li><a href="global.html#updateBackgroundLayers">updateBackgroundLayers</a></li><li><a href="global.html#updateBoss">updateBoss</a></li><li><a href="global.html#updateBullets">updateBullets</a></li><li><a href="global.html#updateCoins">updateCoins</a></li><li><a href="global.html#updateDying">updateDying</a></li><li><a href="global.html#updateEnemies">updateEnemies</a></li><li><a href="global.html#updateFrame">updateFrame</a></li><li><a href="global.html#updateGameElements">updateGameElements</a></li><li><a href="global.html#updateHitbox">updateHitbox</a></li><li><a href="global.html#updateLightImage">updateLightImage</a></li><li><a href="global.html#updatePlayer">updatePlayer</a></li><li><a href="global.html#updatePoisons">updatePoisons</a></li><li><a href="global.html#updateSwimming">updateSwimming</a></li><li><a href="global.html#updateUI">updateUI</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Fri Jan 17 2025 13:37:29 GMT+0100 (Mitteleuropäische Normalzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

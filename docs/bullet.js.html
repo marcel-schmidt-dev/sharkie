@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: bullet.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: bullet.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import { canvas, GAME_SPEED } from "../main";
+
+class Bullet {
+
+    /**
+     * Creates an instance of Bullet.
+     * 
+     * @constructor
+     * @param {number} x - The x-coordinate of the bullet.
+     * @param {number} y - The y-coordinate of the bullet.
+     * @param {boolean} [special=false] - Indicates if the bullet is special.
+     * @param {boolean} [buffed=false] - Indicates if the bullet is buffed.
+     */
+    constructor(x, y, special = false, buffed = false) {
+        this.x = x;
+        this.y = y;
+        this.width = canvas.width * 0.025;
+        this.height = canvas.width * 0.025;
+        this.speed = canvas.width * 0.003 * GAME_SPEED;
+        this.damage = special ? (buffed ? 4 : 3) : (buffed ? 2 : 1);
+        this.image = new Image();
+        if (buffed) {
+            this.image.src = './assets/sharkie/4.Attack/Bubble trap/Buffed.png';
+        }
+        else {
+            this.image.src = './assets/sharkie/4.Attack/Bubble trap/Bubble.png';
+        }
+        this.hitbox = { x: this.x, y: this.y, width: this.width, height: this.height };
+        this.isCollided = false;
+    }
+
+    /**
+     * Updates the position of the bullet and its hitbox.
+     * Increases the x-coordinate by the bullet's speed and updates the hitbox dimensions.
+     */
+    update() {
+        this.x += this.speed;
+        this.hitbox = { x: this.x, y: this.y, width: this.width, height: this.height };
+    }
+
+    /**
+     * Draws the bullet image on the provided canvas context.
+     *
+     * @param {CanvasRenderingContext2D} ctx - The canvas rendering context to draw the bullet on.
+     */
+    draw(ctx) {
+        ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+    }
+
+    /**
+     * Checks if the bullet is within the bounds of the canvas.
+     * 
+     * @returns {boolean} True if the bullet is within the canvas bounds, false otherwise.
+     */
+    isInBounds() {
+        return this.x + this.width > 0 &amp;&amp; this.x &lt; canvas.width &amp;&amp; this.y + this.height > 0 &amp;&amp; this.y &lt; canvas.height;
+    }
+
+    /**
+     * Checks if the bullet is colliding with another object.
+     *
+     * @param {Object} other - The other object to check collision with.
+     * @param {Object} other.hitbox - The hitbox of the other object.
+     * @param {number} other.hitbox.x - The x-coordinate of the other object's hitbox.
+     * @param {number} other.hitbox.y - The y-coordinate of the other object's hitbox.
+     * @param {number} other.hitbox.width - The width of the other object's hitbox.
+     * @param {number} other.hitbox.height - The height of the other object's hitbox.
+     * @returns {boolean} - Returns true if the bullet is colliding with the other object, otherwise false.
+     */
+    isCollidingWith(other) {
+        const bulletHitbox = this.hitbox;
+        const otherHitbox = other.hitbox;
+
+        if (bulletHitbox.x &lt; otherHitbox.x + otherHitbox.width &amp;&amp;
+            bulletHitbox.x + bulletHitbox.width > otherHitbox.x &amp;&amp;
+            bulletHitbox.y &lt; otherHitbox.y + otherHitbox.height &amp;&amp;
+            bulletHitbox.y + bulletHitbox.height > otherHitbox.y) {
+            this.isCollided = true;
+            return true;
+        }
+    }
+}
+
+export default Bullet;</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Bullet.html">Bullet</a></li><li><a href="module.exports.html">exports</a></li><li><a href="module.exports_module.exports.html">exports</a></li></ul><h3>Global</h3><ul><li><a href="global.html#addTouchEventListener">addTouchEventListener</a></li><li><a href="global.html#advanceAnimation">advanceAnimation</a></li><li><a href="global.html#advancePhase">advancePhase</a></li><li><a href="global.html#checkBossCollisions">checkBossCollisions</a></li><li><a href="global.html#checkBulletCollisions">checkBulletCollisions</a></li><li><a href="global.html#checkCollisions">checkCollisions</a></li><li><a href="global.html#checkEnemyCollisions">checkEnemyCollisions</a></li><li><a href="global.html#createHitbox">createHitbox</a></li><li><a href="global.html#displayLoseScreen">displayLoseScreen</a></li><li><a href="global.html#displayWinScreen">displayWinScreen</a></li><li><a href="global.html#draw">draw</a></li><li><a href="global.html#drawHitbox">drawHitbox</a></li><li><a href="global.html#endAttack">endAttack</a></li><li><a href="global.html#getRandomCooldown">getRandomCooldown</a></li><li><a href="global.html#handleAnimationQueue">handleAnimationQueue</a></li><li><a href="global.html#handleAnnouncePhase">handleAnnouncePhase</a></li><li><a href="global.html#handleBossDefeatAnimation">handleBossDefeatAnimation</a></li><li><a href="global.html#handleCoinCollision">handleCoinCollision</a></li><li><a href="global.html#handleCollision">handleCollision</a></li><li><a href="global.html#handleCollisionWithBullet">handleCollisionWithBullet</a></li><li><a href="global.html#handleCollisionWithEnemy">handleCollisionWithEnemy</a></li><li><a href="global.html#handleDeathAnimation">handleDeathAnimation</a></li><li><a href="global.html#handleDying">handleDying</a></li><li><a href="global.html#handleHealthBar">handleHealthBar</a></li><li><a href="global.html#handleHitFrames">handleHitFrames</a></li><li><a href="global.html#handleIdle">handleIdle</a></li><li><a href="global.html#handleLevelTimeout">handleLevelTimeout</a></li><li><a href="global.html#handleMovement">handleMovement</a></li><li><a href="global.html#handlePoisonCollision">handlePoisonCollision</a></li><li><a href="global.html#handleShooting">handleShooting</a></li><li><a href="global.html#handleShootingFrames">handleShootingFrames</a></li><li><a href="global.html#handleSpecialShooting">handleSpecialShooting</a></li><li><a href="global.html#initializeBackgroundLayers">initializeBackgroundLayers</a></li><li><a href="global.html#initializeLightImage">initializeLightImage</a></li><li><a href="global.html#initializeProperties">initializeProperties</a></li><li><a href="global.html#isCollidingWith">isCollidingWith</a></li><li><a href="global.html#isInBounds">isInBounds</a></li><li><a href="global.html#loadFrames">loadFrames</a></li><li><a href="global.html#move">move</a></li><li><a href="global.html#moveToTarget">moveToTarget</a></li><li><a href="global.html#onCollisionWithBullet">onCollisionWithBullet</a></li><li><a href="global.html#patrol">patrol</a></li><li><a href="global.html#performAttack">performAttack</a></li><li><a href="global.html#removeEventListeners">removeEventListeners</a></li><li><a href="global.html#returnToOriginalPosition">returnToOriginalPosition</a></li><li><a href="global.html#setPlayerPosition">setPlayerPosition</a></li><li><a href="global.html#showEndScreen">showEndScreen</a></li><li><a href="global.html#spawnBoss">spawnBoss</a></li><li><a href="global.html#spawnEnemies">spawnEnemies</a></li><li><a href="global.html#spawnEnemy">spawnEnemy</a></li><li><a href="global.html#start">start</a></li><li><a href="global.html#startAttack">startAttack</a></li><li><a href="global.html#startCollisionAnimation">startCollisionAnimation</a></li><li><a href="global.html#stop">stop</a></li><li><a href="global.html#switchAnimation">switchAnimation</a></li><li><a href="global.html#switchToAnimation">switchToAnimation</a></li><li><a href="global.html#update">update</a></li><li><a href="global.html#updateAnimation">updateAnimation</a></li><li><a href="global.html#updateBackgroundLayers">updateBackgroundLayers</a></li><li><a href="global.html#updateBoss">updateBoss</a></li><li><a href="global.html#updateBullets">updateBullets</a></li><li><a href="global.html#updateCoins">updateCoins</a></li><li><a href="global.html#updateDying">updateDying</a></li><li><a href="global.html#updateEnemies">updateEnemies</a></li><li><a href="global.html#updateFrame">updateFrame</a></li><li><a href="global.html#updateGameElements">updateGameElements</a></li><li><a href="global.html#updateHitbox">updateHitbox</a></li><li><a href="global.html#updateLightImage">updateLightImage</a></li><li><a href="global.html#updatePlayer">updatePlayer</a></li><li><a href="global.html#updatePoisons">updatePoisons</a></li><li><a href="global.html#updateSwimming">updateSwimming</a></li><li><a href="global.html#updateUI">updateUI</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Fri Jan 17 2025 13:37:29 GMT+0100 (Mitteleuropäische Normalzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
